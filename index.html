@@ -1204,7 +1204,6 @@
     async function startBarcodeScanner() {
       try {
         const video = document.getElementById('scanner-video');
-        const canvas = document.getElementById('scanner-canvas');
         const statusDiv = document.getElementById('scanner-status');
 
         statusDiv.innerHTML = `
@@ -1214,13 +1213,25 @@
           </div>
         `;
 
-        // Request camera access
-        scannerStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: 'environment' } 
-        });
-        
+        // Request camera access with better constraints
+        const constraints = {
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        };
+
+        scannerStream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = scannerStream;
-        await video.play();
+        
+        // Wait for video to be ready
+        await new Promise((resolve) => {
+          video.onloadedmetadata = () => {
+            video.play();
+            resolve();
+          };
+        });
 
         statusDiv.innerHTML = `
           <div class="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full">
@@ -1229,33 +1240,47 @@
           </div>
         `;
 
-        // Initialize ZXing barcode reader
+        // Initialize ZXing barcode reader with better settings
         const codeReader = new ZXing.BrowserMultiFormatReader();
-        isScanning = true;
+        const hints = new Map();
+        const formats = [
+          ZXing.BarcodeFormat.EAN_13,
+          ZXing.BarcodeFormat.EAN_8,
+          ZXing.BarcodeFormat.CODE_128,
+          ZXing.BarcodeFormat.CODE_39,
+          ZXing.BarcodeFormat.UPC_A,
+          ZXing.BarcodeFormat.UPC_E
+        ];
+        hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
+        hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
 
-        // Continuous scanning
+        isScanning = true;
+        let lastScannedCode = '';
+        let lastScanTime = 0;
+
+        // Continuous scanning with optimized frequency
         const scanBarcode = async () => {
           if (!isScanning) return;
 
           try {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = await codeReader.decodeFromImageData(imageData);
-
-            if (code && code.text) {
-              // Barcode detected!
-              handleBarcodeDetected(code.text);
+            const result = await codeReader.decodeOnceFromVideoDevice(undefined, video);
+            
+            if (result && result.text) {
+              const now = Date.now();
+              // Prevent duplicate scans within 1 second
+              if (result.text !== lastScannedCode || now - lastScanTime > 1000) {
+                lastScannedCode = result.text;
+                lastScanTime = now;
+                handleBarcodeDetected(result.text);
+                return; // Stop after successful scan
+              }
             }
           } catch (err) {
-            // No barcode found, continue scanning
+            // No barcode found or error, continue scanning
           }
 
           if (isScanning) {
-            requestAnimationFrame(scanBarcode);
+            setTimeout(scanBarcode, 100); // Scan every 100ms
           }
         };
 
@@ -1341,5 +1366,5 @@
     });
     observer.observe(document.getElementById('pos-screen'), { attributes: true, attributeFilter: ['class'] });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71049cb7ff81b0',t:'MTc2NzI2MDAzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b710e7ed312479b',t:'MTc2NzI2MDQ0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
