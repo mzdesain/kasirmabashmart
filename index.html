@@ -87,47 +87,51 @@
  </head>
  <body class="h-full bg-gray-50"><!-- Loading Overlay -->
   <div id="loading-overlay" class="loading-overlay hidden">
-   <div class="bg-white rounded-xl p-8 shadow-2xl text-center"><i class="fas fa-spinner fa-spin text-6xl text-indigo-600 mb-4"></i>
+   <div class="bg-white rounded-xl p-8 shadow-2xl text-center"><i class="fas fa-spinner fa-spin text-6xl text-blue-600 mb-4"></i>
     <p class="text-xl font-bold text-gray-800">Memproses...</p>
     <p class="text-sm text-gray-600 mt-2">Mohon tunggu sebentar</p>
    </div>
   </div><!-- Pemilihan Kasir Screen -->
-  <div id="cashier-selection" class="h-full flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
-   <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-2xl w-full mx-4">
-    <div class="text-center mb-10">
-     <div class="inline-block mb-4"><img src="https://cdn.pixabay.com/photo/2022/03/16/13/37/online-7072510_640.png" alt="MABASH MART Logo" class="w-32 h-32 object-contain mx-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-      <div class="hidden inline-block bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full p-4"><i class="fas fa-shopping-cart text-white text-6xl"></i>
+  <div id="cashier-selection" class="h-full bg-white overflow-auto" style="background-image: linear-gradient(rgba(200, 200, 200, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(200, 200, 200, 0.15) 1px, transparent 1px); background-size: 40px 40px;">
+   <div class="min-h-full flex flex-col items-center justify-center px-4 py-20">
+    <div class="text-center mb-10 mt-8">
+     <div class="inline-block mb-6"><img src="https://cdn.pixabay.com/photo/2022/03/16/13/37/online-7072510_640.png" alt="MABASH MART Logo" class="w-40 h-40 object-contain mx-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      <div class="hidden inline-block bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full p-4"><i class="fas fa-shopping-cart text-white text-6xl"></i>
       </div>
      </div>
-     <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">MABASH MART</h1>
-     <p class="text-gray-600 text-sm font-medium">Dashboard Point of Sale System</p>
+     <h1 class="text-5xl font-bold text-blue-700 mb-2">MABASH MART</h1>
+     <p class="text-yellow-600 text-lg font-bold">Belanja Mudah, Harga Hemat</p>
     </div>
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Pilih Kasir Bertugas</h2>
-    <div id="cashier-buttons-grid" class="grid grid-cols-2 gap-4"><!-- Cashier buttons will be rendered here -->
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Pilih Kasir Bertugas</h2>
+    <div id="cashier-buttons-grid" class="grid grid-cols-2 gap-6 max-w-3xl w-full mb-10"><!-- Cashier buttons will be rendered here -->
     </div>
-    <div class="mt-8 text-center text-xs text-gray-500 bg-gray-50 p-4 rounded-lg">
-     <p class="font-medium">📍 Jl. Poros Palopo - Makassar</p>
+    <div class="mt-8 text-center text-sm text-gray-600 bg-blue-50 p-6 rounded-xl border-2 border-blue-200 shadow-md">
+     <p class="font-bold text-base text-blue-800 mb-2"><i class="fas fa-map-marker-alt text-red-500"></i> Jl. Poros Palopo - Makassar</p>
      <p>Desa Mattirowalie, Kec. Maniangpajo</p>
      <p>Kab. Wajo, Sulawesi Selatan</p>
-     <p class="mt-2">📞 085251675143</p>
+     <p class="mt-3 font-semibold text-blue-700"><i class="fas fa-phone-alt text-green-500"></i> 085251675143</p>
+    </div>
+    <div class="mt-6 text-center text-sm text-gray-500 pb-8">
+     <p>© 2025 Created by <span class="font-bold text-gray-700">Muzanni</span></p>
+     <p class="mt-1">Design by <span class="font-bold text-gray-700">Canva</span></p>
     </div>
    </div>
   </div><!-- Main POS Screen -->
   <div id="pos-screen" class="h-full hidden bg-gray-100"><!-- Top Navigation Bar -->
-   <nav class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
+   <nav class="bg-blue-700 shadow-lg">
     <div class="px-3 md:px-6 py-3 md:py-4">
      <div class="flex justify-between items-center">
       <div class="flex items-center gap-2 md:gap-4">
-       <div class="bg-white rounded-full p-1"><img src="https://cdn.pixabay.com/photo/2022/03/16/13/37/online-7072510_640.png" alt="MABASH MART Logo" class="w-10 h-10 md:w-12 md:h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-shopping-cart text-indigo-600 text-xl md:text-3xl hidden"></i>
+       <div class="bg-white rounded-full p-1"><img src="https://cdn.pixabay.com/photo/2022/03/16/13/37/online-7072510_640.png" alt="MABASH MART Logo" class="w-10 h-10 md:w-12 md:h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-shopping-cart text-blue-600 text-xl md:text-3xl hidden"></i>
        </div>
        <div class="text-white">
-        <h1 class="text-lg md:text-2xl font-bold">MABASH MART</h1>
-        <p class="text-xs md:text-sm text-indigo-100 hidden sm:block">Point of Sale Dashboard</p>
+        <h1 class="text-lg md:text-2xl font-bold drop-shadow">MABASH MART</h1>
+        <p class="text-xs md:text-sm text-yellow-300 hidden sm:block font-semibold">Belanja Mudah, Harga Hemat</p>
        </div>
       </div>
       <div class="flex items-center gap-1 md:gap-3">
        <div class="text-right text-white mr-2 md:mr-4 hidden md:block">
-        <p class="text-xs md:text-sm text-indigo-100">Kasir Bertugas</p>
+        <p class="text-xs md:text-sm text-blue-100">Kasir Bertugas</p>
         <p id="current-cashier" class="font-bold text-sm md:text-lg"></p>
        </div><button onclick="showMenu()" class="lg:hidden bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-3 py-2 rounded-lg text-sm"> <i class="fas fa-bars"></i> </button>
        <div class="hidden lg:flex items-center gap-3"><button onclick="showCashierManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-users"></i> Kasir </button> <button onclick="showCategoryManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-tags"></i> Kategori </button> <button onclick="showStockManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-boxes"></i> Kelola Stok </button> <button onclick="showReports()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-chart-bar"></i> Laporan </button> <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-sign-out-alt"></i> Keluar </button>
@@ -145,19 +149,19 @@
       <p class="text-sm text-gray-600">Kasir Bertugas</p>
       <p id="mobile-cashier-name" class="font-bold text-lg"></p>
      </div>
-     <div class="space-y-3"><button onclick="showCashierManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-users"></i> Kelola Kasir </button> <button onclick="showCategoryManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-tags"></i> Kategori </button> <button onclick="showStockManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-boxes"></i> Kelola Stok </button> <button onclick="showReports(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-chart-bar"></i> Laporan </button> <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-sign-out-alt"></i> Keluar </button>
+     <div class="space-y-3"><button onclick="showCashierManagement(); closeMenu();" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-users"></i> Kelola Kasir </button> <button onclick="showCategoryManagement(); closeMenu();" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-tags"></i> Kategori </button> <button onclick="showStockManagement(); closeMenu();" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-boxes"></i> Kelola Stok </button> <button onclick="showReports(); closeMenu();" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-chart-bar"></i> Laporan </button> <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-sign-out-alt"></i> Keluar </button>
      </div>
     </div>
    </div>
    <div class="flex flex-col lg:flex-row h-full" style="height: calc(100% - 80px);"><!-- Left Panel - Products & Stock -->
     <div class="w-full lg:w-2/3 bg-white p-3 md:p-6 overflow-auto">
      <div class="mb-4 md:mb-6"><!-- Barcode Scanner -->
-      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 md:p-5 rounded-xl border-2 border-blue-200 shadow-sm">
-       <div class="flex items-center gap-2 mb-2 md:mb-3"><i class="fas fa-barcode text-indigo-600 text-xl md:text-2xl"></i> <label class="block text-xs md:text-sm font-bold text-gray-700">Scan Barcode / Cari Produk</label>
+      <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-3 md:p-5 rounded-xl border-2 border-blue-400 shadow-sm">
+       <div class="flex items-center gap-2 mb-2 md:mb-3"><i class="fas fa-barcode text-blue-600 text-xl md:text-2xl"></i> <label class="block text-xs md:text-sm font-bold text-gray-700">Scan Barcode / Cari Produk</label>
        </div>
-       <div class="flex gap-2 md:gap-3"><input type="text" id="barcode-input" placeholder="Ketik barcode atau nama produk..." class="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"> <button onclick="toggleBarcodeScanner()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center gap-2"> <i class="fas fa-camera"></i> <span class="hidden sm:inline">Kamera</span> </button> <button onclick="searchProduct()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 md:px-8 py-2 md:py-3 rounded-lg text-sm md:text-base font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center gap-2"> <i class="fas fa-search"></i> <span class="hidden sm:inline">Cari</span> </button>
+       <div class="flex gap-2 md:gap-3"><input type="text" id="barcode-input" placeholder="Ketik barcode atau nama produk..." class="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"> <button onclick="toggleBarcodeScanner()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center gap-2"> <i class="fas fa-camera"></i> <span class="hidden sm:inline">Kamera</span> </button> <button onclick="searchProduct()" class="bg-red-600 hover:bg-red-700 text-white px-4 md:px-8 py-2 md:py-3 rounded-lg text-sm md:text-base font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center gap-2"> <i class="fas fa-search"></i> <span class="hidden sm:inline">Cari</span> </button>
        </div>
-       <div id="search-results" class="hidden mt-3 bg-white rounded-lg shadow-lg border-2 border-indigo-200 max-h-64 overflow-y-auto"></div>
+       <div id="search-results" class="hidden mt-3 bg-white rounded-lg shadow-lg border-2 border-blue-300 max-h-64 overflow-y-auto"></div>
       </div>
      </div><!-- Category Tabs -->
      <div id="category-tabs" class="flex gap-2 mb-4 overflow-x-auto pb-2"><!-- Category tabs will be rendered here -->
@@ -165,13 +169,13 @@
      <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"><!-- Products will be rendered here -->
      </div>
     </div><!-- Right Panel - Cart & Payment (Desktop) -->
-    <div class="hidden lg:flex w-1/3 bg-gradient-to-br from-gray-50 to-gray-100 border-l-4 border-indigo-500 flex-col shadow-2xl"><!-- Cart Header -->
-     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 shadow-lg">
+    <div class="hidden lg:flex w-1/3 bg-gradient-to-br from-gray-50 to-gray-100 border-l-4 border-blue-700 flex-col shadow-2xl"><!-- Cart Header -->
+     <div class="bg-blue-700 p-4 shadow-lg">
       <div class="flex items-center justify-between text-white">
        <div class="flex items-center gap-3"><i class="fas fa-shopping-cart text-2xl"></i>
         <h2 class="text-xl font-bold">Keranjang Belanja</h2>
        </div>
-       <div id="cart-count-desktop" class="bg-white text-indigo-600 font-bold px-3 py-1 rounded-full text-sm hidden">
+       <div id="cart-count-desktop" class="bg-white text-blue-600 font-bold px-3 py-1 rounded-full text-sm hidden">
         0
        </div>
       </div>
@@ -182,26 +186,26 @@
        <p class="text-sm text-center mt-2">Scan barcode atau pilih produk</p>
       </div>
      </div><!-- Payment Section -->
-     <div class="border-t-2 border-indigo-200 bg-white p-4 shadow-lg">
+     <div class="border-t-2 border-blue-300 bg-white p-4 shadow-lg">
       <div class="space-y-3 mb-4">
        <div class="flex justify-between text-sm text-gray-600"><span>Jumlah Item:</span> <span id="item-count-desktop" class="font-semibold">0</span>
        </div>
        <div class="flex justify-between text-lg"><span class="font-semibold text-gray-700">Subtotal:</span> <span id="subtotal-desktop" class="font-bold text-gray-900">Rp 0</span>
        </div>
        <div class="border-t-2 border-dashed border-gray-300 pt-2"></div>
-       <div class="flex justify-between text-2xl"><span class="font-bold text-gray-800">TOTAL:</span> <span id="total-desktop" class="font-bold text-indigo-600">Rp 0</span>
+       <div class="flex justify-between text-2xl"><span class="font-bold text-gray-800">TOTAL:</span> <span id="total-desktop" class="font-bold text-red-600">Rp 0</span>
        </div>
       </div>
-      <div class="space-y-2"><button id="btn-payment-desktop" onclick="processPayment()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg hover:shadow-xl transition transform hover:scale-105 hidden"> <i class="fas fa-cash-register mr-2"></i>Proses Pembayaran </button> <button id="btn-clear-desktop" onclick="clearCart()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-6 rounded-lg text-base shadow-md hover:shadow-lg transition hidden"> <i class="fas fa-trash mr-2"></i>Kosongkan Keranjang </button>
+      <div class="space-y-2"><button id="btn-payment-desktop" onclick="processPayment()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg hover:shadow-xl transition transform hover:scale-105 hidden"> <i class="fas fa-cash-register mr-2"></i>Proses Pembayaran </button> <button id="btn-clear-desktop" onclick="clearCart()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg text-base shadow-md hover:shadow-lg transition hidden"> <i class="fas fa-trash mr-2"></i>Kosongkan Keranjang </button>
       </div>
      </div>
     </div>
-   </div><!-- Mobile Floating Cart Button --> <button id="mobile-cart-btn" onclick="toggleMobileCart()" class="lg:hidden fixed bottom-6 right-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition transform">
+   </div><!-- Mobile Floating Cart Button --> <button id="mobile-cart-btn" onclick="toggleMobileCart()" class="lg:hidden fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition transform">
     <div class="relative"><i class="fas fa-shopping-cart text-2xl"></i> <span id="cart-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
     </div></button> <!-- Mobile Cart Modal -->
    <div id="mobile-cart-modal" class="lg:hidden hidden fixed inset-0 bg-black bg-opacity-50 z-50">
     <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[80vh] flex flex-col shadow-2xl">
-     <div class="p-4 border-b flex items-center justify-between bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-3xl">
+     <div class="p-4 border-b flex items-center justify-between bg-blue-700 rounded-t-3xl">
       <h2 class="text-xl font-bold text-white">Keranjang Belanja</h2><button onclick="toggleMobileCart()" class="text-white text-3xl font-bold">×</button>
      </div>
      <div id="cart-items-mobile" class="flex-1 overflow-auto p-4 space-y-2">
@@ -210,9 +214,9 @@
      <div class="border-t p-4 space-y-3 bg-gray-50">
       <div class="flex justify-between text-lg"><span class="font-semibold">Subtotal:</span> <span id="subtotal-mobile" class="font-bold">Rp 0</span>
       </div>
-      <div class="flex justify-between text-2xl"><span class="font-bold">Total:</span> <span id="total-mobile" class="font-bold text-blue-600">Rp 0</span>
+      <div class="flex justify-between text-2xl"><span class="font-bold">Total:</span> <span id="total-mobile" class="font-bold text-red-600">Rp 0</span>
       </div>
-      <div class="space-y-2"><button id="btn-payment-mobile" onclick="processPayment(); toggleMobileCart();" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg hidden"> <i class="fas fa-cash-register mr-2"></i>Proses Pembayaran </button> <button id="btn-clear-mobile" onclick="clearCart(); toggleMobileCart();" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg text-base hidden"> <i class="fas fa-trash mr-2"></i>Hapus Semua </button>
+      <div class="space-y-2"><button id="btn-payment-mobile" onclick="processPayment(); toggleMobileCart();" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg hidden"> <i class="fas fa-cash-register mr-2"></i>Proses Pembayaran </button> <button id="btn-clear-mobile" onclick="clearCart(); toggleMobileCart();" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg text-base hidden"> <i class="fas fa-trash mr-2"></i>Hapus Semua </button>
       </div>
      </div>
     </div>
@@ -230,7 +234,7 @@
     <div class="p-4 md:p-6">
      <div class="mb-6 bg-blue-50 p-3 md:p-4 rounded-lg border-2 border-blue-200">
       <h3 class="font-semibold mb-3 text-blue-900 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-user-plus"></i> Tambah Kasir Baru</h3>
-      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-cashier-name" placeholder="Nama kasir (contoh: Siti Aminah)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"> <button onclick="addNewCashier()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
+      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-cashier-name" placeholder="Nama kasir (contoh: Siti Aminah)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"> <button onclick="addNewCashier()" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
       </div>
      </div>
      <h3 class="font-semibold mb-4 text-gray-800 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-list"></i> Daftar Kasir</h3>
@@ -251,7 +255,7 @@
     <div class="p-4 md:p-6">
      <div class="mb-6 bg-blue-50 p-3 md:p-4 rounded-lg border-2 border-blue-200">
       <h3 class="font-semibold mb-3 text-indigo-900 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-plus-circle"></i> Tambah Kategori Baru</h3>
-      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">🍎 Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">🍞 Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">🍕 Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">🧀 Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
+      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">🍎 Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">���� Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">🍕 Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">🧀 Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
       </div>
      </div>
      <h3 class="font-semibold mb-4 text-gray-800 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-list"></i> Daftar Kategori</h3>
@@ -353,7 +357,7 @@
        Rp 0
       </div>
      </div>
-     <div class="flex gap-2"><button onclick="confirmPayment()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 md:py-3 px-4 md:px-6 rounded-lg text-sm md:text-base"> Cetak Struk </button> <button onclick="closePaymentModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg text-sm md:text-base"> Batal </button>
+     <div class="flex gap-2"><button onclick="confirmPayment()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 md:py-3 px-4 md:px-6 rounded-lg text-sm md:text-base"> Cetak Struk </button> <button onclick="closePaymentModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg text-sm md:text-base"> Batal </button>
      </div>
     </div>
    </div>
@@ -362,12 +366,12 @@
    <div class="bg-white rounded-lg w-full max-w-2xl">
     <div class="p-4 md:p-6">
      <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-camera text-purple-600"></i> Scan Barcode dengan Kamera</h2><button onclick="stopBarcodeScanner()" class="text-gray-500 hover:text-gray-700 text-3xl font-bold">×</button>
+      <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-camera text-blue-600"></i> Scan Barcode dengan Kamera</h2><button onclick="stopBarcodeScanner()" class="text-gray-500 hover:text-gray-700 text-3xl font-bold">×</button>
      </div>
      <div class="relative bg-black rounded-lg overflow-hidden mb-4" style="aspect-ratio: 4/3;">
       <video id="scanner-video" class="w-full h-full object-cover"></video>
       <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-       <div class="border-4 border-green-500 rounded-lg" style="width: 80%; height: 60%; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
+       <div class="border-4 border-cyan-500 rounded-lg" style="width: 80%; height: 60%; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
       </div>
       <canvas id="scanner-canvas" class="hidden"></canvas>
      </div>
@@ -384,8 +388,8 @@
       </div>
      </div>
      <div class="text-center text-sm text-gray-600">
-      <p>💡 Arahkan kamera ke barcode produk</p>
-      <p>Pastikan barcode terlihat jelas dalam area hijau</p>
+      <p>📱 Arahkan kamera ke barcode produk</p>
+      <p>Pastikan barcode terlihat jelas dalam area cyan</p>
      </div>
     </div>
    </div>
@@ -480,7 +484,7 @@
         updateUI();
         
         console.log('🔄 Mengambil data dari Google Sheets...');
-        console.log('📍 URL:', GOOGLE_SCRIPT_URL);
+        console.log('��� URL:', GOOGLE_SCRIPT_URL);
         
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 detik timeout
@@ -528,7 +532,7 @@
         }
         
       } catch (error) {
-        console.error('❌ Error fetching data:', error);
+        console.error('�� Error fetching data:', error);
         console.error('Error name:', error.name);
         console.error('Error message:', error.message);
         
@@ -654,7 +658,7 @@
         console.log('📦 Update result:', result);
         
         if (result.success) {
-          console.log('����� Data berhasil diupdate di Google Sheets!');
+          console.log('��� Data berhasil diupdate di Google Sheets!');
           
           // Update local data
           let targetArray;
@@ -700,7 +704,7 @@
     async function deleteFromSheet(type, id) {
       try {
         showLoading();
-        console.log(`🗑️ Menghapus ${type} (${id}) dari Google Sheets`);
+        console.log(`🗑��� Menghapus ${type} (${id}) dari Google Sheets`);
         
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 20000);
@@ -728,7 +732,7 @@
         console.log('📦 Delete result:', result);
         
         if (result.success) {
-          console.log('✅ Data berhasil dihapus dari Google Sheets!');
+          console.log('��� Data berhasil dihapus dari Google Sheets!');
           
           // Delete from local data
           let targetArray;
@@ -761,7 +765,7 @@
         }
         
       } catch (error) {
-        console.error('❌ Error deleting:', error);
+        console.error('��� Error deleting:', error);
         showNotification('❌ Error: ' + error.message, 'error');
         return false;
       } finally {
@@ -813,13 +817,13 @@
       const container = document.getElementById('cashier-buttons-grid');
       const colors = [
         'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
-        'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700',
-        'from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700',
-        'from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700',
-        'from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700',
         'from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700',
+        'from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700',
+        'from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700',
         'from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700',
-        'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+        'from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700',
+        'from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700',
+        'from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700'
       ];
 
       if (cashiers.length === 0) {
@@ -832,8 +836,21 @@
         return;
       }
 
+      const cardColors = [
+        'bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
+        'bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700',
+        'bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700',
+        'bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700',
+        'bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700',
+        'bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700',
+        'bg-gradient-to-br from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700',
+        'bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700',
+        'bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700',
+        'bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700'
+      ];
+
       container.innerHTML = cashiers.map((cashier, index) => `
-        <button onclick="selectCashier('${cashier.name}')" class="group bg-gradient-to-br ${colors[index % colors.length]} text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+        <button onclick="selectCashier('${cashier.name}')" class="group ${cardColors[index % cardColors.length]} text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
           <div class="flex items-center justify-center gap-3">
             <i class="fas fa-user text-3xl"></i>
             <span class="text-lg">${cashier.name}</span>
@@ -883,14 +900,14 @@
       const tabsContainer = document.getElementById('category-tabs');
       
       let tabsHtml = `
-        <button onclick="filterCategory('all')" class="category-btn ${currentCategory === 'all' ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-purple-400">
+        <button onclick="filterCategory('all')" class="category-btn ${currentCategory === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-blue-500 hover:text-white transition">
           <i class="fas fa-th-large"></i> Semua
         </button>
       `;
       
       categories.forEach(cat => {
         tabsHtml += `
-          <button onclick="filterCategory('${cat.name}')" class="category-btn ${currentCategory === cat.name ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-purple-400">
+          <button onclick="filterCategory('${cat.name}')" class="category-btn ${currentCategory === cat.name ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-blue-500 hover:text-white transition">
             <i class="fas ${cat.icon}"></i> ${cat.name}
           </button>
         `;
@@ -924,7 +941,7 @@
             <p class="text-xs text-gray-500">${product.category}</p>
           </div>
           <div class="text-center mt-2">
-            <p class="text-blue-600 font-bold text-lg">Rp ${product.price.toLocaleString('id-ID')}</p>
+            <p class="text-red-600 font-bold text-lg">Rp ${product.price.toLocaleString('id-ID')}</p>
             <p class="text-xs ${product.stock <= product.minStock ? 'text-red-600 font-semibold' : 'text-gray-500'}">
               Stok: ${product.stock}${product.stock <= product.minStock ? ' ⚠️' : ''}
             </p>
@@ -982,7 +999,7 @@
         p.name.toLowerCase().includes(normalizedQuery.toLowerCase())
       );
 
-      console.log('📋 Hasil pencarian:', results.length, 'produk');
+      console.log('��� Hasil pencarian:', results.length, 'produk');
 
       const resultsContainer = document.getElementById('search-results');
 
@@ -1000,7 +1017,7 @@
       }
 
       resultsContainer.innerHTML = results.map(product => `
-        <div class="p-3 hover:bg-indigo-50 cursor-pointer border-b last:border-b-0 transition" onclick="selectProductFromSearch('${product.id}')">
+        <div class="p-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0 transition" onclick="selectProductFromSearch('${product.id}')">
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <h4 class="font-semibold text-sm text-gray-800">${product.name}</h4>
@@ -1010,8 +1027,8 @@
               </p>
             </div>
             <div class="text-right ml-3">
-              <p class="text-indigo-600 font-bold">Rp ${product.price.toLocaleString('id-ID')}</p>
-              <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">Klik untuk tambah</span>
+              <p class="text-blue-600 font-bold">Rp ${product.price.toLocaleString('id-ID')}</p>
+              <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Klik untuk tambah</span>
             </div>
           </div>
         </div>
@@ -1114,9 +1131,9 @@
               <div class="flex items-center gap-2">
                 <button onclick="decreaseQuantity(${index})" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-gray-700 transition">-</button>
                 <span class="w-12 text-center font-bold text-gray-800">${item.quantity}</span>
-                <button onclick="increaseQuantity(${index})" class="bg-indigo-500 hover:bg-indigo-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold transition">+</button>
+                <button onclick="increaseQuantity(${index})" class="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold transition">+</button>
               </div>
-              <span class="font-bold text-indigo-600 text-sm">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+              <span class="font-bold text-red-600 text-sm">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
             </div>
           </div>
         `).join('');
@@ -1889,7 +1906,7 @@
         showNotification(`✅ ${product.name} ditambahkan ke keranjang!`, 'success');
       } else {
         console.log('❌ Produk tidak ditemukan untuk barcode:', normalizedBarcode);
-        console.log('📦 Barcode yang ada di database:', products.map(p => p.barcode));
+        console.log('📋 Barcode yang ada di database:', products.map(p => p.barcode));
         showNotification(`❌ Barcode ${normalizedBarcode} tidak ditemukan!`, 'error');
       }
 
@@ -1917,5 +1934,5 @@
       await initializeApp();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71f442b1a4fd1b',t:'MTc2NzI2OTg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b72e952e3fc1ecc',t:'MTc2NzI3OTg5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
