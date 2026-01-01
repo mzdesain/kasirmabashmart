@@ -476,12 +476,14 @@
     // Google Sheets API Functions
     async function fetchAllData() {
       try {
-        showLoading();
+        // Tampilkan UI dulu dengan data kosong, jangan block dengan loading
+        updateUI();
+        
         console.log('🔄 Mengambil data dari Google Sheets...');
         console.log('📍 URL:', GOOGLE_SCRIPT_URL);
         
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 detik timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 detik timeout
         
         const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getAll&t=' + Date.now(), {
           method: 'GET',
@@ -521,14 +523,11 @@
           console.log('📋 Sample barcode:', products.length > 0 ? products[0].barcode : 'none');
           
           updateUI();
-          showNotification('✅ Data berhasil dimuat dari Google Sheets!', 'success');
         } else {
           throw new Error(data.message || 'Gagal memuat data dari server');
         }
         
-        hideLoading();
       } catch (error) {
-        hideLoading();
         console.error('❌ Error fetching data:', error);
         console.error('Error name:', error.name);
         console.error('Error message:', error.message);
@@ -536,9 +535,9 @@
         let errorMessage = '⚠️ ';
         
         if (error.name === 'AbortError') {
-          errorMessage += 'Koneksi timeout. Pastikan:\n1. URL Google Apps Script sudah benar\n2. Script sudah di-deploy dengan akses "Anyone"\n3. Koneksi internet stabil';
+          errorMessage += 'Koneksi timeout. Pastikan koneksi internet stabil.';
         } else if (error.message.includes('Failed to fetch')) {
-          errorMessage += 'Tidak bisa terhubung ke Google Sheets. Pastikan:\n1. Google Apps Script sudah di-deploy ulang\n2. Akses diatur ke "Anyone"\n3. URL deployment sudah benar';
+          errorMessage += 'Tidak bisa terhubung ke Google Sheets. Periksa koneksi internet.';
         } else {
           errorMessage += error.message;
         }
@@ -551,17 +550,6 @@
         cashiers = [];
         transactions = [];
         updateUI();
-        
-        // Tampilkan pesan bantuan di console
-        console.log('');
-        console.log('🔧 CARA TROUBLESHOOT:');
-        console.log('1. Buka Google Apps Script Editor');
-        console.log('2. Klik "Deploy" > "Manage deployments"');
-        console.log('3. Edit deployment, pastikan "Execute as" = "Me"');
-        console.log('4. "Who has access" = "Anyone"');
-        console.log('5. Klik "Deploy" dan copy URL baru');
-        console.log('6. Ganti GOOGLE_SCRIPT_URL dengan URL baru');
-        console.log('');
       }
     }
 
@@ -666,7 +654,7 @@
         console.log('📦 Update result:', result);
         
         if (result.success) {
-          console.log('✅ Data berhasil diupdate di Google Sheets!');
+          console.log('����� Data berhasil diupdate di Google Sheets!');
           
           // Update local data
           let targetArray;
@@ -1929,5 +1917,5 @@
       await initializeApp();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71db7bc3e29cf0',t:'MTc2NzI2ODgzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71f442b1a4fd1b',t:'MTc2NzI2OTg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
