@@ -329,60 +329,60 @@
    </div>
   </div><!-- Receipt Print -->
   <div id="receipt-print" class="hidden">
-   <div style="width: 80mm; font-family: monospace; font-size: 12px; padding: 10px;">
+   <div style="width: 80mm; font-family: monospace; font-size: 12px; padding: 10px; background: white;">
     <div style="text-align: center; margin-bottom: 10px;">
-     <div style="font-size: 16px; font-weight: bold;">
+     <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">
       MABASH MART
      </div>
-     <div style="font-size: 10px;">
+     <div style="font-size: 11px; line-height: 1.4;">
       Jl. Poros Palopo - Makassar
      </div>
-     <div style="font-size: 10px;">
+     <div style="font-size: 11px; line-height: 1.4;">
       Desa Mattirowalie, Kec. Maniangpajo
      </div>
-     <div style="font-size: 10px;">
+     <div style="font-size: 11px; line-height: 1.4;">
       Kab. Wajo, Sulawesi Selatan
      </div>
-     <div style="font-size: 10px;">
+     <div style="font-size: 11px; line-height: 1.4; margin-top: 3px;">
       Telp: 085251675143
      </div>
-     <div style="border-top: 1px dashed #000; margin: 5px 0;"></div>
+     <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
     </div>
-    <div style="margin-bottom: 10px; font-size: 10px;">
+    <div style="margin-bottom: 10px; font-size: 11px; line-height: 1.6;">
      <div>
-      Kasir: <span id="receipt-cashier"></span>
+      <strong>Kasir:</strong> <span id="receipt-cashier"></span>
      </div>
      <div>
-      Tanggal: <span id="receipt-date"></span>
+      <strong>Tanggal:</strong> <span id="receipt-date"></span>
      </div>
      <div>
-      Waktu: <span id="receipt-time"></span>
+      <strong>Waktu:</strong> <span id="receipt-time"></span>
      </div>
     </div>
-    <div style="border-top: 1px dashed #000; margin: 5px 0;"></div>
-    <table style="width: 100%; font-size: 10px;" id="receipt-items"><!-- Receipt items will be rendered here -->
-    </table>
-    <div style="border-top: 1px dashed #000; margin: 5px 0;"></div>
-    <div style="margin-bottom: 10px;">
-     <div style="display: flex; justify-content: space-between;"><span>Total:</span> <span id="receipt-total" style="font-weight: bold;"></span>
+    <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
+    <div id="receipt-items" style="width: 100%; font-size: 11px; margin: 10px 0;"><!-- Receipt items will be rendered here -->
+    </div>
+    <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
+    <div style="margin: 10px 0; font-size: 12px; line-height: 1.8;">
+     <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span><strong>TOTAL:</strong></span> <span id="receipt-total" style="font-weight: bold;"></span>
      </div>
-     <div style="display: flex; justify-content: space-between;"><span>Bayar:</span> <span id="receipt-paid"></span>
+     <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Bayar:</span> <span id="receipt-paid"></span>
      </div>
      <div style="display: flex; justify-content: space-between;"><span>Kembali:</span> <span id="receipt-change"></span>
      </div>
     </div>
-    <div style="border-top: 1px dashed #000; margin: 10px 0;"></div>
-    <div style="margin-top: 20px; margin-bottom: 10px;">
-     <div style="text-align: center; font-size: 10px;">
+    <div style="border-top: 2px dashed #000; margin: 10px 0;"></div>
+    <div style="margin-top: 15px; margin-bottom: 15px;">
+     <div style="text-align: center; font-size: 11px; margin-bottom: 5px;">
       Tanda Tangan Kasir
      </div>
-     <div style="height: 40px; border-bottom: 1px solid #000; margin: 10px 20px;"></div>
+     <div style="height: 50px; border-bottom: 1px solid #000; margin: 10px 25px;"></div>
     </div>
-    <div style="text-align: center; margin-top: 10px;">
-     <div style="font-size: 10px;">
+    <div style="text-align: center; margin-top: 15px;">
+     <div style="font-size: 11px; font-weight: bold;">
       Terima kasih atas kunjungan Anda
      </div>
-     <div style="font-size: 8px; color: #666; margin-top: 5px;">
+     <div style="font-size: 9px; color: #666; margin-top: 5px;">
       Created by Muzanni
      </div>
     </div>
@@ -856,34 +856,39 @@
       document.getElementById('receipt-date').textContent = now.toLocaleDateString('id-ID');
       document.getElementById('receipt-time').textContent = now.toLocaleTimeString('id-ID');
 
-      const itemsHtml = transaction.items.map(item => `
-        <tr>
-          <td>${item.name}</td>
-          <td style="text-align: right;">${item.quantity}</td>
-          <td style="text-align: right;">Rp ${item.price.toLocaleString('id-ID')}</td>
-          <td style="text-align: right;">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</td>
-        </tr>
-      `).join('');
+      // Generate receipt items as formatted text
+      let itemsHtml = '<div style="margin-bottom: 8px; font-weight: bold; padding-bottom: 5px; border-bottom: 1px solid #000;">';
+      itemsHtml += '<div style="display: flex; justify-content: space-between;">';
+      itemsHtml += '<span style="width: 45%;">Item</span>';
+      itemsHtml += '<span style="width: 15%; text-align: center;">Qty</span>';
+      itemsHtml += '<span style="width: 20%; text-align: right;">Harga</span>';
+      itemsHtml += '<span style="width: 20%; text-align: right;">Total</span>';
+      itemsHtml += '</div></div>';
 
-      document.getElementById('receipt-items').innerHTML = `
-        <tr style="font-weight: bold; border-bottom: 1px solid #000;">
-          <td>Item</td>
-          <td style="text-align: right;">Qty</td>
-          <td style="text-align: right;">Harga</td>
-          <td style="text-align: right;">Subtotal</td>
-        </tr>
-        ${itemsHtml}
-      `;
+      transaction.items.forEach(item => {
+        itemsHtml += '<div style="display: flex; justify-content: space-between; margin-bottom: 5px; line-height: 1.5;">';
+        itemsHtml += `<span style="width: 45%;">${item.name}</span>`;
+        itemsHtml += `<span style="width: 15%; text-align: center;">${item.quantity}</span>`;
+        itemsHtml += `<span style="width: 20%; text-align: right;">${item.price.toLocaleString('id-ID')}</span>`;
+        itemsHtml += `<span style="width: 20%; text-align: right; font-weight: bold;">${(item.price * item.quantity).toLocaleString('id-ID')}</span>`;
+        itemsHtml += '</div>';
+      });
+
+      document.getElementById('receipt-items').innerHTML = itemsHtml;
 
       document.getElementById('receipt-total').textContent = 'Rp ' + transaction.total.toLocaleString('id-ID');
       document.getElementById('receipt-paid').textContent = 'Rp ' + transaction.paid.toLocaleString('id-ID');
       document.getElementById('receipt-change').textContent = 'Rp ' + transaction.change.toLocaleString('id-ID');
 
       document.getElementById('receipt-print').classList.remove('hidden');
-      window.print();
+      
+      // Better print handling for mobile
       setTimeout(() => {
-        document.getElementById('receipt-print').classList.add('hidden');
-      }, 100);
+        window.print();
+        setTimeout(() => {
+          document.getElementById('receipt-print').classList.add('hidden');
+        }, 500);
+      }, 300);
     }
 
     function showCategoryManagement() {
@@ -1366,5 +1371,5 @@
     });
     observer.observe(document.getElementById('pos-screen'), { attributes: true, attributeFilter: ['class'] });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b710e7ed312479b',t:'MTc2NzI2MDQ0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b711911774ffe0f',t:'MTc2NzI2MDg3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
