@@ -251,7 +251,7 @@
     <div class="p-4 md:p-6">
      <div class="mb-6 bg-blue-50 p-3 md:p-4 rounded-lg border-2 border-blue-200">
       <h3 class="font-semibold mb-3 text-indigo-900 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-plus-circle"></i> Tambah Kategori Baru</h3>
-      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">🍎 Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">🍞 Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">🍕 Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">🧀 Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
+      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">🍎 Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">🍞 Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">�� Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">🧀 Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
       </div>
      </div>
      <h3 class="font-semibold mb-4 text-gray-800 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-list"></i> Daftar Kategori</h3>
@@ -456,8 +456,8 @@
    </div>
   </div>
   <script>
-    // Google Apps Script Endpoint
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmHko_KGZZKhUwsbXYWMujkvGimPT54TRCCpPf9ZATxSK9YS4tY4jkkfy_QWFD3CgI/exec';
+    // Google Apps Script Endpoint - URL sudah dikonfigurasi
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbziyA0QDwWBxiYvhCzzbOFbCv503XprbjMocxC0EY3pcRaGoOfZPmaRPShEO_8FK4Ah/exec';
 
     let currentCashier = '';
     let currentCategory = 'all';
@@ -467,52 +467,39 @@
     let scannerStream = null;
     let isScanning = false;
 
-    // Data arrays
+    // Data arrays - TIDAK menggunakan localStorage
     let products = [];
     let categories = [];
     let cashiers = [];
     let transactions = [];
-    
-    // Default data
-    const defaultCashiers = [
-      { id: 'CSH1', name: 'Siti Aminah' },
-      { id: 'CSH2', name: 'Budi Santoso' },
-      { id: 'CSH3', name: 'Rina Wijaya' },
-      { id: 'CSH4', name: 'Ahmad Hidayat' }
-    ];
-    
-    const defaultCategories = [
-      { id: 'CAT1', name: 'Makanan', icon: 'fa-bowl-food' },
-      { id: 'CAT2', name: 'Minuman', icon: 'fa-mug-hot' },
-      { id: 'CAT3', name: 'Snack', icon: 'fa-cookie-bite' },
-      { id: 'CAT4', name: 'Alat Tulis', icon: 'fa-pen' },
-      { id: 'CAT5', name: 'Perlengkapan Bayi', icon: 'fa-baby' }
-    ];
-
-    // Use default data when connection fails
-    function useDefaultData() {
-      cashiers = [...defaultCashiers];
-      categories = [...defaultCategories];
-      products = [];
-      transactions = [];
-      updateUI();
-    }
 
     // Google Sheets API Functions
     async function fetchAllData() {
       try {
         showLoading();
+        console.log('🔄 Mengambil data dari Google Sheets...');
+        console.log('📍 URL:', GOOGLE_SCRIPT_URL);
         
-        // Add 10 second timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 detik timeout
         
-        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getAll', {
+        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getAll&t=' + Date.now(), {
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'follow',
           signal: controller.signal
         });
         clearTimeout(timeoutId);
         
+        console.log('📥 Response status:', response.status);
+        console.log('📥 Response OK:', response.ok);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log('📦 Data diterima:', data);
         
         if (data.success) {
           products = data.data.products || [];
@@ -520,281 +507,266 @@
           cashiers = data.data.cashiers || [];
           transactions = data.data.transactions || [];
           
+          console.log('✅ Data berhasil dimuat dari Google Sheets');
+          console.log(`- ${cashiers.length} kasir`);
+          console.log(`- ${categories.length} kategori`);
+          console.log(`- ${products.length} produk`);
+          console.log(`- ${transactions.length} transaksi`);
+          
           updateUI();
+          showNotification('✅ Data berhasil dimuat dari Google Sheets!', 'success');
         } else {
-          showNotification('Gagal memuat data: ' + (data.message || 'Unknown error'), 'error');
-          useDefaultData();
+          throw new Error(data.message || 'Gagal memuat data dari server');
         }
         
         hideLoading();
       } catch (error) {
         hideLoading();
-        console.error('Error fetching data:', error);
+        console.error('❌ Error fetching data:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        
+        let errorMessage = '⚠️ ';
         
         if (error.name === 'AbortError') {
-          showNotification('Koneksi timeout. Menggunakan data default...', 'error');
+          errorMessage += 'Koneksi timeout. Pastikan:\n1. URL Google Apps Script sudah benar\n2. Script sudah di-deploy dengan akses "Anyone"\n3. Koneksi internet stabil';
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMessage += 'Tidak bisa terhubung ke Google Sheets. Pastikan:\n1. Google Apps Script sudah di-deploy ulang\n2. Akses diatur ke "Anyone"\n3. URL deployment sudah benar';
         } else {
-          showNotification('Error koneksi. Menggunakan data default...', 'error');
+          errorMessage += error.message;
         }
         
-        // Use default data if connection fails
-        useDefaultData();
+        showNotification(errorMessage, 'error');
+        
+        // Initialize dengan data kosong
+        products = [];
+        categories = [];
+        cashiers = [];
+        transactions = [];
+        updateUI();
+        
+        // Tampilkan pesan bantuan di console
+        console.log('');
+        console.log('🔧 CARA TROUBLESHOOT:');
+        console.log('1. Buka Google Apps Script Editor');
+        console.log('2. Klik "Deploy" > "Manage deployments"');
+        console.log('3. Edit deployment, pastikan "Execute as" = "Me"');
+        console.log('4. "Who has access" = "Anyone"');
+        console.log('5. Klik "Deploy" dan copy URL baru');
+        console.log('6. Ganti GOOGLE_SCRIPT_URL dengan URL baru');
+        console.log('');
       }
     }
 
     async function saveToSheet(type, data) {
       try {
         showLoading();
+        console.log(`💾 Menyimpan ${type} ke Google Sheets:`, data);
         
-        // Update local data immediately for better UX
-        switch(type) {
-          case 'cashier':
-            cashiers.push(data);
-            break;
-          case 'category':
-            categories.push(data);
-            break;
-          case 'product':
-            products.push(data);
-            break;
-          case 'transaction':
-            transactions.push(data);
-            break;
-        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
         
-        // Update UI immediately
-        updateUI();
+        const formData = new URLSearchParams();
+        formData.append('action', 'add');
+        formData.append('type', type);
+        formData.append('data', JSON.stringify(data));
         
-        // Sync to Google Sheets with retry
-        const maxRetries = 3;
-        let retryCount = 0;
-        let synced = false;
+        console.log('📤 Request body:', formData.toString());
         
-        while (retryCount < maxRetries && !synced) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
-            
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                action: 'add',
-                type: type,
-                data: JSON.stringify(data)
-              }),
-              signal: controller.signal
-            });
-            
-            clearTimeout(timeoutId);
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              synced = true;
-              console.log('✅ Data berhasil disinkronkan ke Google Sheets');
-            } else {
-              throw new Error(result.message || 'Sync failed');
-            }
-          } catch (syncError) {
-            retryCount++;
-            console.log(`❌ Sync attempt ${retryCount} failed:`, syncError.message);
-            
-            if (retryCount < maxRetries) {
-              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
-            }
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData.toString(),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        console.log('📥 Save response status:', response.status);
+        const result = await response.json();
+        console.log('���� Save result:', result);
+        
+        if (result.success) {
+          console.log('✅ Data berhasil disimpan ke Google Sheets!');
+          
+          // Update local data
+          switch(type) {
+            case 'cashier':
+              cashiers.push(data);
+              break;
+            case 'category':
+              categories.push(data);
+              break;
+            case 'product':
+              products.push(data);
+              break;
+            case 'transaction':
+              transactions.push(data);
+              break;
           }
+          
+          updateUI();
+          showNotification('✅ Data tersimpan di Google Sheets!', 'success');
+          return true;
+        } else {
+          console.error('❌ Gagal menyimpan:', result.message);
+          showNotification('❌ Gagal menyimpan: ' + result.message, 'error');
+          return false;
         }
         
-        hideLoading();
-        
-        if (!synced) {
-          showNotification('⚠️ Data tersimpan lokal. Sync ke Google Sheets gagal.', 'error');
-        }
-        
-        return true;
       } catch (error) {
+        console.error('❌ Error saving:', error);
+        showNotification('❌ Error: ' + error.message, 'error');
+        return false;
+      } finally {
         hideLoading();
-        console.error('Error saving:', error);
-        showNotification('Data disimpan lokal', 'error');
-        return true;
       }
     }
 
     async function updateInSheet(type, id, data) {
       try {
         showLoading();
+        console.log(`🔄 Mengupdate ${type} (${id}) ke Google Sheets:`, data);
         
-        // Update local data immediately
-        let targetArray;
-        switch(type) {
-          case 'cashier':
-            targetArray = cashiers;
-            break;
-          case 'category':
-            targetArray = categories;
-            break;
-          case 'product':
-            targetArray = products;
-            break;
-          case 'transaction':
-            targetArray = transactions;
-            break;
-        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
         
-        const index = targetArray.findIndex(item => item.id === id);
-        if (index !== -1) {
-          targetArray[index] = data;
-        }
+        const formData = new URLSearchParams();
+        formData.append('action', 'update');
+        formData.append('type', type);
+        formData.append('id', id);
+        formData.append('data', JSON.stringify(data));
         
-        // Update UI immediately
-        updateUI();
+        console.log('�������� Update request body:', formData.toString());
         
-        // Sync to Google Sheets with retry
-        const maxRetries = 3;
-        let retryCount = 0;
-        let synced = false;
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData.toString(),
+          signal: controller.signal
+        });
         
-        while (retryCount < maxRetries && !synced) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
-            
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                action: 'update',
-                type: type,
-                id: id,
-                data: JSON.stringify(data)
-              }),
-              signal: controller.signal
-            });
-            
-            clearTimeout(timeoutId);
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              synced = true;
-              console.log('✅ Update berhasil disinkronkan ke Google Sheets');
-            } else {
-              throw new Error(result.message || 'Sync failed');
-            }
-          } catch (syncError) {
-            retryCount++;
-            console.log(`❌ Update sync attempt ${retryCount} failed:`, syncError.message);
-            
-            if (retryCount < maxRetries) {
-              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
-            }
+        clearTimeout(timeoutId);
+        
+        console.log('📥 Update response status:', response.status);
+        const result = await response.json();
+        console.log('📦 Update result:', result);
+        
+        if (result.success) {
+          console.log('✅ Data berhasil diupdate di Google Sheets!');
+          
+          // Update local data
+          let targetArray;
+          switch(type) {
+            case 'cashier':
+              targetArray = cashiers;
+              break;
+            case 'category':
+              targetArray = categories;
+              break;
+            case 'product':
+              targetArray = products;
+              break;
+            case 'transaction':
+              targetArray = transactions;
+              break;
           }
+          
+          const index = targetArray.findIndex(item => item.id === id);
+          if (index !== -1) {
+            targetArray[index] = data;
+          }
+          
+          updateUI();
+          return true;
+        } else {
+          console.error('❌ Gagal update:', result.message);
+          showNotification('❌ Gagal update: ' + result.message, 'error');
+          return false;
         }
         
-        hideLoading();
-        
-        if (!synced) {
-          showNotification('⚠️ Data diupdate lokal. Sync ke Google Sheets gagal.', 'error');
-        }
-        
-        return true;
       } catch (error) {
+        console.error('❌ Error updating:', error);
+        showNotification('❌ Error: ' + error.message, 'error');
+        return false;
+      } finally {
         hideLoading();
-        console.error('Error updating:', error);
-        showNotification('Data diupdate lokal', 'error');
-        return true;
       }
     }
 
     async function deleteFromSheet(type, id) {
       try {
         showLoading();
+        console.log(`🗑️ Menghapus ${type} (${id}) dari Google Sheets`);
         
-        // Delete from local data immediately
-        let targetArray;
-        switch(type) {
-          case 'cashier':
-            targetArray = cashiers;
-            break;
-          case 'category':
-            targetArray = categories;
-            break;
-          case 'product':
-            targetArray = products;
-            break;
-          case 'transaction':
-            targetArray = transactions;
-            break;
-        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
         
-        const index = targetArray.findIndex(item => item.id === id);
-        if (index !== -1) {
-          targetArray.splice(index, 1);
-        }
+        const formData = new URLSearchParams();
+        formData.append('action', 'delete');
+        formData.append('type', type);
+        formData.append('id', id);
         
-        // Update UI immediately
-        updateUI();
+        console.log('📤 Delete request body:', formData.toString());
         
-        // Sync to Google Sheets with retry
-        const maxRetries = 3;
-        let retryCount = 0;
-        let synced = false;
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData.toString(),
+          signal: controller.signal
+        });
         
-        while (retryCount < maxRetries && !synced) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
-            
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                action: 'delete',
-                type: type,
-                id: id
-              }),
-              signal: controller.signal
-            });
-            
-            clearTimeout(timeoutId);
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              synced = true;
-              console.log('✅ Delete berhasil disinkronkan ke Google Sheets');
-            } else {
-              throw new Error(result.message || 'Sync failed');
-            }
-          } catch (syncError) {
-            retryCount++;
-            console.log(`❌ Delete sync attempt ${retryCount} failed:`, syncError.message);
-            
-            if (retryCount < maxRetries) {
-              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
-            }
+        clearTimeout(timeoutId);
+        
+        console.log('📥 Delete response status:', response.status);
+        const result = await response.json();
+        console.log('📦 Delete result:', result);
+        
+        if (result.success) {
+          console.log('✅ Data berhasil dihapus dari Google Sheets!');
+          
+          // Delete from local data
+          let targetArray;
+          switch(type) {
+            case 'cashier':
+              targetArray = cashiers;
+              break;
+            case 'category':
+              targetArray = categories;
+              break;
+            case 'product':
+              targetArray = products;
+              break;
+            case 'transaction':
+              targetArray = transactions;
+              break;
           }
+          
+          const index = targetArray.findIndex(item => item.id === id);
+          if (index !== -1) {
+            targetArray.splice(index, 1);
+          }
+          
+          updateUI();
+          return true;
+        } else {
+          console.error('❌ Gagal hapus:', result.message);
+          showNotification('❌ Gagal hapus: ' + result.message, 'error');
+          return false;
         }
         
-        hideLoading();
-        
-        if (!synced) {
-          showNotification('⚠️ Data dihapus lokal. Sync ke Google Sheets gagal.', 'error');
-        }
-        
-        return true;
       } catch (error) {
+        console.error('❌ Error deleting:', error);
+        showNotification('❌ Error: ' + error.message, 'error');
+        return false;
+      } finally {
         hideLoading();
-        console.error('Error deleting:', error);
-        showNotification('Data dihapus lokal', 'error');
-        return true;
       }
     }
 
@@ -1924,5 +1896,5 @@
       await initializeApp();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71a65872c4fe8f',t:'MTc2NzI2NjY2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71c46293c37156',t:'MTc2NzI2Nzg5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
