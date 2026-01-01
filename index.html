@@ -475,25 +475,43 @@
     
     // Default data
     const defaultCashiers = [
-      { name: 'Siti Aminah' },
-      { name: 'Budi Santoso' },
-      { name: 'Rina Wijaya' },
-      { name: 'Ahmad Hidayat' }
+      { id: 'CSH1', name: 'Siti Aminah' },
+      { id: 'CSH2', name: 'Budi Santoso' },
+      { id: 'CSH3', name: 'Rina Wijaya' },
+      { id: 'CSH4', name: 'Ahmad Hidayat' }
     ];
     
     const defaultCategories = [
-      { name: 'Makanan', icon: 'fa-bowl-food' },
-      { name: 'Minuman', icon: 'fa-mug-hot' },
-      { name: 'Snack', icon: 'fa-cookie-bite' },
-      { name: 'Alat Tulis', icon: 'fa-pen' },
-      { name: 'Perlengkapan Bayi', icon: 'fa-baby' }
+      { id: 'CAT1', name: 'Makanan', icon: 'fa-bowl-food' },
+      { id: 'CAT2', name: 'Minuman', icon: 'fa-mug-hot' },
+      { id: 'CAT3', name: 'Snack', icon: 'fa-cookie-bite' },
+      { id: 'CAT4', name: 'Alat Tulis', icon: 'fa-pen' },
+      { id: 'CAT5', name: 'Perlengkapan Bayi', icon: 'fa-baby' }
     ];
+
+    // Use default data when connection fails
+    function useDefaultData() {
+      cashiers = [...defaultCashiers];
+      categories = [...defaultCategories];
+      products = [];
+      transactions = [];
+      updateUI();
+    }
 
     // Google Sheets API Functions
     async function fetchAllData() {
       try {
         showLoading();
-        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getAll');
+        
+        // Add 10 second timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getAll', {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
         const data = await response.json();
         
         if (data.success) {
@@ -505,13 +523,22 @@
           updateUI();
         } else {
           showNotification('Gagal memuat data: ' + (data.message || 'Unknown error'), 'error');
+          useDefaultData();
         }
         
         hideLoading();
       } catch (error) {
         hideLoading();
         console.error('Error fetching data:', error);
-        showNotification('Error koneksi ke server: ' + error.message, 'error');
+        
+        if (error.name === 'AbortError') {
+          showNotification('Koneksi timeout. Menggunakan data default...', 'error');
+        } else {
+          showNotification('Error koneksi. Menggunakan data default...', 'error');
+        }
+        
+        // Use default data if connection fails
+        useDefaultData();
       }
     }
 
@@ -525,14 +552,19 @@
           data: data
         };
         
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
         
         // Because of no-cors, we can't read the response
         // We'll just assume it worked and refresh data
@@ -560,14 +592,19 @@
           data: data
         };
         
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
         
         await new Promise(resolve => setTimeout(resolve, 1000));
         await fetchAllData();
@@ -592,14 +629,19 @@
           id: id
         };
         
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
         
         await new Promise(resolve => setTimeout(resolve, 1000));
         await fetchAllData();
@@ -644,19 +686,6 @@
     // Initialize app
     async function initializeApp() {
       await fetchAllData();
-      
-      // Create default data if needed
-      if (cashiers.length === 0) {
-        for (const cashier of defaultCashiers) {
-          await saveToSheet('cashier', { name: cashier.name });
-        }
-      }
-      
-      if (categories.length === 0) {
-        for (const category of defaultCategories) {
-          await saveToSheet('category', { name: category.name, icon: category.icon });
-        }
-      }
     }
 
     function showLoading() {
@@ -1751,8 +1780,7 @@
     // Initialize app when page loads
     document.addEventListener('DOMContentLoaded', async () => {
       await initializeApp();
-      renderCashierButtons();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71852c679b6bb2',t:'MTc2NzI2NTMwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b719090f7738a13',t:'MTc2NzI2NTc3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
