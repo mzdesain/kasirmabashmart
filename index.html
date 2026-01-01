@@ -24,7 +24,12 @@
         position: absolute;
         left: 0;
         top: 0;
-        width: 80mm;
+        width: 100%;
+        max-width: 80mm;
+      }
+      @page {
+        size: 80mm auto;
+        margin: 0;
       }
     }
     
@@ -89,7 +94,7 @@
         <p class="text-xs md:text-sm text-indigo-100">Kasir Bertugas</p>
         <p id="current-cashier" class="font-bold text-sm md:text-lg"></p>
        </div><button onclick="showMenu()" class="lg:hidden bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-3 py-2 rounded-lg text-sm"> <i class="fas fa-bars"></i> </button>
-       <div class="hidden lg:flex items-center gap-3"><button onclick="showCategoryManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-tags"></i> Kategori </button> <button onclick="showStockManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-boxes"></i> Kelola Stok </button> <button onclick="showReports()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-chart-bar"></i> Laporan </button> <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-sign-out-alt"></i> Keluar </button>
+       <div class="hidden lg:flex items-center gap-3"><button onclick="showCashierManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-users"></i> Kasir </button> <button onclick="showCategoryManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-tags"></i> Kategori </button> <button onclick="showStockManagement()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-boxes"></i> Kelola Stok </button> <button onclick="showReports()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-chart-bar"></i> Laporan </button> <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"> <i class="fas fa-sign-out-alt"></i> Keluar </button>
        </div>
       </div>
      </div>
@@ -104,7 +109,7 @@
       <p class="text-sm text-gray-600">Kasir Bertugas</p>
       <p id="mobile-cashier-name" class="font-bold text-lg"></p>
      </div>
-     <div class="space-y-3"><button onclick="showCategoryManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-tags"></i> Kategori </button> <button onclick="showStockManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-boxes"></i> Kelola Stok </button> <button onclick="showReports(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-chart-bar"></i> Laporan </button> <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-sign-out-alt"></i> Keluar </button>
+     <div class="space-y-3"><button onclick="showCashierManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-users"></i> Kelola Kasir </button> <button onclick="showCategoryManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-tags"></i> Kategori </button> <button onclick="showStockManagement(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-boxes"></i> Kelola Stok </button> <button onclick="showReports(); closeMenu();" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-chart-bar"></i> Laporan </button> <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium flex items-center gap-3"> <i class="fas fa-sign-out-alt"></i> Keluar </button>
      </div>
     </div>
    </div>
@@ -173,6 +178,27 @@
       </div>
       <div class="space-y-2"><button id="btn-payment-mobile" onclick="processPayment(); toggleMobileCart();" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg hidden"> <i class="fas fa-cash-register mr-2"></i>Proses Pembayaran </button> <button id="btn-clear-mobile" onclick="clearCart(); toggleMobileCart();" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg text-base hidden"> <i class="fas fa-trash mr-2"></i>Hapus Semua </button>
       </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Cashier Management Modal -->
+  <div id="cashier-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 md:p-4 z-50">
+   <div class="bg-white rounded-xl w-full max-w-3xl max-h-[90%] overflow-auto shadow-2xl">
+    <div class="bg-gradient-to-r from-blue-600 to-cyan-600 p-4 md:p-6 rounded-t-xl">
+     <div class="flex justify-between items-center">
+      <div class="flex items-center gap-2 md:gap-3 text-white"><i class="fas fa-users text-2xl md:text-3xl"></i>
+       <h2 class="text-xl md:text-2xl font-bold">Manajemen Kasir</h2>
+      </div><button onclick="closeCashierManagement()" class="text-white hover:text-gray-200 text-3xl font-bold">×</button>
+     </div>
+    </div>
+    <div class="p-4 md:p-6">
+     <div class="mb-6 bg-blue-50 p-3 md:p-4 rounded-lg border-2 border-blue-200">
+      <h3 class="font-semibold mb-3 text-blue-900 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-user-plus"></i> Tambah Kasir Baru</h3>
+      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-cashier-name" placeholder="Nama kasir (contoh: Siti Aminah)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"> <button onclick="addNewCashier()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
+      </div>
+     </div>
+     <h3 class="font-semibold mb-4 text-gray-800 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-list"></i> Daftar Kasir</h3>
+     <div id="cashiers-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"><!-- Cashiers will be rendered here -->
      </div>
     </div>
    </div>
@@ -328,61 +354,66 @@
     </div>
    </div>
   </div><!-- Receipt Print -->
-  <div id="receipt-print" class="hidden">
-   <div style="width: 80mm; font-family: monospace; font-size: 12px; padding: 10px; background: white;">
-    <div style="text-align: center; margin-bottom: 10px;">
-     <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">
+  <div id="receipt-print" style="display: none;">
+   <div style="width: 100%; max-width: 300px; font-family: 'Courier New', monospace; padding: 20px; background: white; color: black;">
+    <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid black; padding-bottom: 10px;">
+     <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">
       MABASH MART
      </div>
-     <div style="font-size: 11px; line-height: 1.4;">
-      Jl. Poros Palopo - Makassar
-     </div>
-     <div style="font-size: 11px; line-height: 1.4;">
-      Desa Mattirowalie, Kec. Maniangpajo
-     </div>
-     <div style="font-size: 11px; line-height: 1.4;">
-      Kab. Wajo, Sulawesi Selatan
-     </div>
-     <div style="font-size: 11px; line-height: 1.4; margin-top: 3px;">
+     <div style="font-size: 12px; line-height: 1.6;">
+      Jl. Poros Palopo - Makassar<br>
+      Desa Mattirowalie, Kec. Maniangpajo<br>
+      Kab. Wajo, Sulawesi Selatan<br>
       Telp: 085251675143
      </div>
-     <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
     </div>
-    <div style="margin-bottom: 10px; font-size: 11px; line-height: 1.6;">
-     <div>
-      <strong>Kasir:</strong> <span id="receipt-cashier"></span>
-     </div>
-     <div>
-      <strong>Tanggal:</strong> <span id="receipt-date"></span>
-     </div>
-     <div>
-      <strong>Waktu:</strong> <span id="receipt-time"></span>
-     </div>
+    <table style="width: 100%; margin-bottom: 15px; font-size: 12px; border-collapse: collapse;">
+     <tbody>
+      <tr>
+       <td style="padding: 3px 0;"><strong>Kasir:</strong></td>
+       <td style="padding: 3px 0;" id="receipt-cashier"></td>
+      </tr>
+      <tr>
+       <td style="padding: 3px 0;"><strong>Tanggal:</strong></td>
+       <td style="padding: 3px 0;" id="receipt-date"></td>
+      </tr>
+      <tr>
+       <td style="padding: 3px 0;"><strong>Waktu:</strong></td>
+       <td style="padding: 3px 0;" id="receipt-time"></td>
+      </tr>
+     </tbody>
+    </table>
+    <div style="border-top: 2px solid black; border-bottom: 2px solid black; padding: 10px 0; margin-bottom: 15px;">
+     <table id="receipt-items" style="width: 100%; font-size: 12px; border-collapse: collapse;"><!-- Receipt items will be rendered here -->
+     </table>
     </div>
-    <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
-    <div id="receipt-items" style="width: 100%; font-size: 11px; margin: 10px 0;"><!-- Receipt items will be rendered here -->
-    </div>
-    <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
-    <div style="margin: 10px 0; font-size: 12px; line-height: 1.8;">
-     <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span><strong>TOTAL:</strong></span> <span id="receipt-total" style="font-weight: bold;"></span>
-     </div>
-     <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Bayar:</span> <span id="receipt-paid"></span>
-     </div>
-     <div style="display: flex; justify-content: space-between;"><span>Kembali:</span> <span id="receipt-change"></span>
-     </div>
-    </div>
-    <div style="border-top: 2px dashed #000; margin: 10px 0;"></div>
-    <div style="margin-top: 15px; margin-bottom: 15px;">
-     <div style="text-align: center; font-size: 11px; margin-bottom: 5px;">
+    <table style="width: 100%; font-size: 14px; margin-bottom: 15px; border-collapse: collapse;">
+     <tbody>
+      <tr>
+       <td style="padding: 5px 0; font-weight: bold;">TOTAL:</td>
+       <td style="padding: 5px 0; text-align: right; font-weight: bold;" id="receipt-total"></td>
+      </tr>
+      <tr>
+       <td style="padding: 5px 0;">Bayar:</td>
+       <td style="padding: 5px 0; text-align: right;" id="receipt-paid"></td>
+      </tr>
+      <tr style="border-top: 1px solid black;">
+       <td style="padding: 5px 0; font-weight: bold;">Kembali:</td>
+       <td style="padding: 5px 0; text-align: right; font-weight: bold;" id="receipt-change"></td>
+      </tr>
+     </tbody>
+    </table>
+    <div style="margin: 20px 0; border-top: 2px solid black; padding-top: 15px;">
+     <div style="text-align: center; font-size: 12px; margin-bottom: 10px;">
       Tanda Tangan Kasir
      </div>
-     <div style="height: 50px; border-bottom: 1px solid #000; margin: 10px 25px;"></div>
+     <div style="height: 60px; border-bottom: 2px solid black; margin: 0 30px;"></div>
     </div>
-    <div style="text-align: center; margin-top: 15px;">
-     <div style="font-size: 11px; font-weight: bold;">
+    <div style="text-align: center; margin-top: 20px; border-top: 2px solid black; padding-top: 15px;">
+     <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">
       Terima kasih atas kunjungan Anda
      </div>
-     <div style="font-size: 9px; color: #666; margin-top: 5px;">
+     <div style="font-size: 10px; color: #666; margin-top: 8px;">
       Created by Muzanni
      </div>
     </div>
@@ -396,6 +427,14 @@
     let barcodeScanner = null;
     let scannerStream = null;
     let isScanning = false;
+
+    // Cashiers data
+    let cashiers = [
+      'Ahmad Yasin',
+      'Muh. Rifki',
+      'Baso Ismail',
+      'Rahma'
+    ];
 
     // Categories data
     let categories = [
@@ -436,6 +475,11 @@
       if (savedCategories) {
         categories = JSON.parse(savedCategories);
       }
+
+      const savedCashiers = localStorage.getItem('mabash_cashiers');
+      if (savedCashiers) {
+        cashiers = JSON.parse(savedCashiers);
+      }
     }
 
     function saveProducts() {
@@ -444,6 +488,33 @@
 
     function saveCategories() {
       localStorage.setItem('mabash_categories', JSON.stringify(categories));
+    }
+
+    function saveCashiers() {
+      localStorage.setItem('mabash_cashiers', JSON.stringify(cashiers));
+    }
+
+    function renderCashierButtons() {
+      const container = document.querySelector('#cashier-selection .grid');
+      const colors = [
+        'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
+        'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700',
+        'from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700',
+        'from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700',
+        'from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700',
+        'from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700',
+        'from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700',
+        'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+      ];
+
+      container.innerHTML = cashiers.map((cashier, index) => `
+        <button onclick="selectCashier('${cashier}')" class="group bg-gradient-to-br ${colors[index % colors.length]} text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          <div class="flex items-center justify-center gap-3">
+            <i class="fas fa-user text-3xl"></i>
+            <span class="text-lg">${cashier}</span>
+          </div>
+        </button>
+      `).join('');
     }
 
     function selectCashier(name) {
@@ -856,22 +927,16 @@
       document.getElementById('receipt-date').textContent = now.toLocaleDateString('id-ID');
       document.getElementById('receipt-time').textContent = now.toLocaleTimeString('id-ID');
 
-      // Generate receipt items as formatted text
-      let itemsHtml = '<div style="margin-bottom: 8px; font-weight: bold; padding-bottom: 5px; border-bottom: 1px solid #000;">';
-      itemsHtml += '<div style="display: flex; justify-content: space-between;">';
-      itemsHtml += '<span style="width: 45%;">Item</span>';
-      itemsHtml += '<span style="width: 15%; text-align: center;">Qty</span>';
-      itemsHtml += '<span style="width: 20%; text-align: right;">Harga</span>';
-      itemsHtml += '<span style="width: 20%; text-align: right;">Total</span>';
-      itemsHtml += '</div></div>';
+      // Generate receipt items as table rows
+      let itemsHtml = '<tr style="border-bottom: 1px solid black;"><th style="padding: 5px 0; text-align: left;">Item</th><th style="padding: 5px 0; text-align: center;">Qty</th><th style="padding: 5px 0; text-align: right;">Harga</th><th style="padding: 5px 0; text-align: right;">Total</th></tr>';
 
       transaction.items.forEach(item => {
-        itemsHtml += '<div style="display: flex; justify-content: space-between; margin-bottom: 5px; line-height: 1.5;">';
-        itemsHtml += `<span style="width: 45%;">${item.name}</span>`;
-        itemsHtml += `<span style="width: 15%; text-align: center;">${item.quantity}</span>`;
-        itemsHtml += `<span style="width: 20%; text-align: right;">${item.price.toLocaleString('id-ID')}</span>`;
-        itemsHtml += `<span style="width: 20%; text-align: right; font-weight: bold;">${(item.price * item.quantity).toLocaleString('id-ID')}</span>`;
-        itemsHtml += '</div>';
+        itemsHtml += '<tr>';
+        itemsHtml += `<td style="padding: 5px 0;">${item.name}</td>`;
+        itemsHtml += `<td style="padding: 5px 0; text-align: center;">${item.quantity}</td>`;
+        itemsHtml += `<td style="padding: 5px 0; text-align: right;">${item.price.toLocaleString('id-ID')}</td>`;
+        itemsHtml += `<td style="padding: 5px 0; text-align: right; font-weight: bold;">${(item.price * item.quantity).toLocaleString('id-ID')}</td>`;
+        itemsHtml += '</tr>';
       });
 
       document.getElementById('receipt-items').innerHTML = itemsHtml;
@@ -880,13 +945,14 @@
       document.getElementById('receipt-paid').textContent = 'Rp ' + transaction.paid.toLocaleString('id-ID');
       document.getElementById('receipt-change').textContent = 'Rp ' + transaction.change.toLocaleString('id-ID');
 
-      document.getElementById('receipt-print').classList.remove('hidden');
+      const receiptDiv = document.getElementById('receipt-print');
+      receiptDiv.style.display = 'block';
       
       // Better print handling for mobile
       setTimeout(() => {
         window.print();
         setTimeout(() => {
-          document.getElementById('receipt-print').classList.add('hidden');
+          receiptDiv.style.display = 'none';
         }, 500);
       }, 300);
     }
@@ -970,6 +1036,113 @@
       renderCategoriesList();
       document.querySelector('.fixed.inset-0').remove();
       showNotification('Kategori berhasil dihapus!', 'success');
+    }
+
+    // Cashier Management Functions
+    function showCashierManagement() {
+      renderCashiersList();
+      document.getElementById('cashier-modal').classList.remove('hidden');
+    }
+
+    function closeCashierManagement() {
+      document.getElementById('cashier-modal').classList.add('hidden');
+      document.getElementById('new-cashier-name').value = '';
+      renderCashierButtons();
+    }
+
+    function renderCashiersList() {
+      const container = document.getElementById('cashiers-list');
+      container.innerHTML = cashiers.map((cashier, index) => `
+        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 p-4 rounded-lg flex items-center justify-between hover:shadow-md transition">
+          <div class="flex items-center gap-3 flex-1">
+            <i class="fas fa-user-circle text-3xl text-blue-600"></i>
+            <input type="text" value="${cashier}" onchange="updateCashierName(${index}, this.value)" class="flex-1 font-semibold text-gray-800 bg-transparent border-b-2 border-transparent hover:border-blue-300 focus:border-blue-500 focus:outline-none px-2 py-1 transition">
+          </div>
+          <button onclick="deleteCashier(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition ml-2">
+            Hapus
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function addNewCashier() {
+      const name = document.getElementById('new-cashier-name').value.trim();
+
+      if (!name) {
+        showNotification('Mohon isi nama kasir!', 'error');
+        return;
+      }
+
+      if (cashiers.find(c => c.toLowerCase() === name.toLowerCase())) {
+        showNotification('Kasir sudah ada!', 'error');
+        return;
+      }
+
+      cashiers.push(name);
+      saveCashiers();
+      renderCashiersList();
+      document.getElementById('new-cashier-name').value = '';
+      showNotification('Kasir berhasil ditambahkan!', 'success');
+    }
+
+    function updateCashierName(index, newName) {
+      const name = newName.trim();
+      
+      if (!name) {
+        showNotification('Nama kasir tidak boleh kosong!', 'error');
+        renderCashiersList();
+        return;
+      }
+
+      if (cashiers.find((c, i) => i !== index && c.toLowerCase() === name.toLowerCase())) {
+        showNotification('Nama kasir sudah ada!', 'error');
+        renderCashiersList();
+        return;
+      }
+
+      const oldName = cashiers[index];
+      cashiers[index] = name;
+      
+      // Update current cashier if it's the one being edited
+      if (currentCashier === oldName) {
+        currentCashier = name;
+        document.getElementById('current-cashier').textContent = name;
+        document.getElementById('mobile-cashier-name').textContent = name;
+      }
+
+      saveCashiers();
+      showNotification('Nama kasir berhasil diperbarui!', 'success');
+    }
+
+    function deleteCashier(index) {
+      const cashier = cashiers[index];
+
+      if (cashier === currentCashier) {
+        showNotification('Tidak bisa hapus kasir yang sedang login!', 'error');
+        return;
+      }
+
+      const confirmDelete = document.createElement('div');
+      confirmDelete.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      confirmDelete.innerHTML = `
+        <div class="bg-white rounded-lg p-6 max-w-sm shadow-2xl">
+          <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
+          <p class="mb-6">Apakah Anda yakin ingin menghapus kasir "${cashier}"?</p>
+          <div class="flex gap-2">
+            <button onclick="confirmDeleteCashier(${index})" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
+            <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded font-medium">Batal</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(confirmDelete);
+    }
+
+    function confirmDeleteCashier(index) {
+      cashiers.splice(index, 1);
+      saveCashiers();
+      renderCashiersList();
+      document.querySelector('.fixed.inset-0').remove();
+      showNotification('Kasir berhasil dihapus!', 'success');
     }
 
     function showStockManagement() {
@@ -1362,6 +1535,7 @@
 
     // Initialize
     loadData();
+    renderCashierButtons();
     
     // Auto-focus barcode input when POS screen is shown
     const observer = new MutationObserver(() => {
@@ -1371,5 +1545,5 @@
     });
     observer.observe(document.getElementById('pos-screen'), { attributes: true, attributeFilter: ['class'] });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b711911774ffe0f',t:'MTc2NzI2MDg3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71243b1692938e',t:'MTc2NzI2MTMzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
