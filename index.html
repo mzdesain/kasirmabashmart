@@ -6,8 +6,6 @@
   <title>MABASH MART - Sistem Kasir</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
   <script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
   <style>
     body {
@@ -84,6 +82,8 @@
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full bg-gray-50"><!-- Loading Overlay -->
   <div id="loading-overlay" class="loading-overlay hidden">
@@ -456,6 +456,9 @@
    </div>
   </div>
   <script>
+    // Google Apps Script Endpoint
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmHko_KGZZKhUwsbXYWMujkvGimPT54TRCCpPf9ZATxSK9YS4tY4jkkfy_QWFD3CgI/exec';
+
     let currentCashier = '';
     let currentCategory = 'all';
     let cart = [];
@@ -464,14 +467,13 @@
     let scannerStream = null;
     let isScanning = false;
 
-    // Data arrays - will be populated from Data SDK
-    let allData = [];
+    // Data arrays
     let products = [];
     let categories = [];
     let cashiers = [];
     let transactions = [];
     
-    // Default data to be created on first load
+    // Default data
     const defaultCashiers = [
       { name: 'Siti Aminah' },
       { name: 'Budi Santoso' },
@@ -487,95 +489,172 @@
       { name: 'Perlengkapan Bayi', icon: 'fa-baby' }
     ];
 
-    // Data SDK Handler
-    const dataHandler = {
-      onDataChanged(data) {
-        allData = data;
+    // Google Sheets API Functions
+    async function fetchAllData() {
+      try {
+        showLoading();
+        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getAll');
+        const data = await response.json();
         
-        // Separate data by type
-        products = data.filter(d => d.type === 'product');
-        categories = data.filter(d => d.type === 'category');
-        cashiers = data.filter(d => d.type === 'cashier');
-        transactions = data.filter(d => d.type === 'transaction');
-
-        // Update UI based on current screen
-        if (!document.getElementById('cashier-selection').classList.contains('hidden')) {
-          renderCashierButtons();
-        }
-        
-        if (!document.getElementById('pos-screen').classList.contains('hidden')) {
-          renderProducts();
-          renderCategoryTabs();
-        }
-
-        // Update modals if they're open
-        if (!document.getElementById('cashier-modal').classList.contains('hidden')) {
-          renderCashiersList();
+        if (data.success) {
+          products = data.data.products || [];
+          categories = data.data.categories || [];
+          cashiers = data.data.cashiers || [];
+          transactions = data.data.transactions || [];
+          
+          updateUI();
+        } else {
+          showNotification('Gagal memuat data: ' + (data.message || 'Unknown error'), 'error');
         }
         
-        if (!document.getElementById('category-modal').classList.contains('hidden')) {
-          renderCategoriesList();
-        }
-        
-        if (!document.getElementById('stock-modal').classList.contains('hidden')) {
-          renderStockTable();
-        }
-        
-        if (!document.getElementById('reports-modal').classList.contains('hidden')) {
-          renderReports();
-        }
-      }
-    };
-
-    // Initialize Data SDK and create default data
-    async function initializeApp() {
-      showLoading();
-      
-      const initResult = await window.dataSdk.init(dataHandler);
-      
-      if (!initResult.isOk) {
-        console.error('Failed to initialize Data SDK');
-        showNotification('Gagal menginisialisasi aplikasi', 'error');
         hideLoading();
-        return;
+      } catch (error) {
+        hideLoading();
+        console.error('Error fetching data:', error);
+        showNotification('Error koneksi ke server: ' + error.message, 'error');
       }
-      
-      // Check if we need to create default data
-      await createDefaultDataIfNeeded();
-      
-      hideLoading();
     }
 
-    async function createDefaultDataIfNeeded() {
-      // Wait a bit for onDataChanged to populate arrays
-      await new Promise(resolve => setTimeout(resolve, 500));
+    async function saveToSheet(type, data) {
+      try {
+        showLoading();
+        
+        const payload = {
+          action: 'add',
+          type: type,
+          data: data
+        };
+        
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        // Because of no-cors, we can't read the response
+        // We'll just assume it worked and refresh data
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await fetchAllData();
+        
+        hideLoading();
+        return true;
+      } catch (error) {
+        hideLoading();
+        console.error('Error saving to sheet:', error);
+        showNotification('Error menyimpan data: ' + error.message, 'error');
+        return false;
+      }
+    }
+
+    async function updateInSheet(type, id, data) {
+      try {
+        showLoading();
+        
+        const payload = {
+          action: 'update',
+          type: type,
+          id: id,
+          data: data
+        };
+        
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await fetchAllData();
+        
+        hideLoading();
+        return true;
+      } catch (error) {
+        hideLoading();
+        console.error('Error updating sheet:', error);
+        showNotification('Error mengupdate data: ' + error.message, 'error');
+        return false;
+      }
+    }
+
+    async function deleteFromSheet(type, id) {
+      try {
+        showLoading();
+        
+        const payload = {
+          action: 'delete',
+          type: type,
+          id: id
+        };
+        
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await fetchAllData();
+        
+        hideLoading();
+        return true;
+      } catch (error) {
+        hideLoading();
+        console.error('Error deleting from sheet:', error);
+        showNotification('Error menghapus data: ' + error.message, 'error');
+        return false;
+      }
+    }
+
+    function updateUI() {
+      if (!document.getElementById('cashier-selection').classList.contains('hidden')) {
+        renderCashierButtons();
+      }
       
-      // Create default cashiers if none exist
+      if (!document.getElementById('pos-screen').classList.contains('hidden')) {
+        renderProducts();
+        renderCategoryTabs();
+      }
+
+      if (!document.getElementById('cashier-modal').classList.contains('hidden')) {
+        renderCashiersList();
+      }
+      
+      if (!document.getElementById('category-modal').classList.contains('hidden')) {
+        renderCategoriesList();
+      }
+      
+      if (!document.getElementById('stock-modal').classList.contains('hidden')) {
+        renderStockTable();
+      }
+      
+      if (!document.getElementById('reports-modal').classList.contains('hidden')) {
+        renderReports();
+      }
+    }
+
+    // Initialize app
+    async function initializeApp() {
+      await fetchAllData();
+      
+      // Create default data if needed
       if (cashiers.length === 0) {
         for (const cashier of defaultCashiers) {
-          const result = await window.dataSdk.create({
-            type: 'cashier',
-            name: cashier.name
-          });
-          
-          if (!result.isOk) {
-            console.error('Failed to create default cashier:', cashier.name);
-          }
+          await saveToSheet('cashier', { name: cashier.name });
         }
       }
       
-      // Create default categories if none exist
       if (categories.length === 0) {
         for (const category of defaultCategories) {
-          const result = await window.dataSdk.create({
-            type: 'category',
-            name: category.name,
-            icon: category.icon
-          });
-          
-          if (!result.isOk) {
-            console.error('Failed to create default category:', category.name);
-          }
+          await saveToSheet('category', { name: category.name, icon: category.icon });
         }
       }
     }
@@ -606,7 +685,6 @@
           <div class="col-span-2 text-center py-8 text-gray-500">
             <i class="fas fa-spinner fa-spin text-5xl mb-3"></i>
             <p>Memuat data kasir...</p>
-            <p class="text-sm mt-2">Mohon tunggu sebentar</p>
           </div>
         `;
         return;
@@ -697,7 +775,7 @@
       }
 
       grid.innerHTML = filteredProducts.map(product => `
-        <div class="bg-white border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer ${product.stock <= product.minStock ? 'border-red-500' : 'border-gray-200'}" onclick="addToCart('${product.__backendId}')">
+        <div class="bg-white border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer ${product.stock <= product.minStock ? 'border-red-500' : 'border-gray-200'}" onclick="addToCart('${product.id}')">
           <div class="text-center mb-2">
             <div class="mb-2">${getCategoryIcon(product.category)}</div>
             <h3 class="font-semibold text-sm mb-1">${product.name}</h3>
@@ -757,14 +835,14 @@
 
       const exactMatch = products.find(p => p.barcode === query);
       if (exactMatch) {
-        addToCart(exactMatch.__backendId);
+        addToCart(exactMatch.id);
         document.getElementById('barcode-input').value = '';
         resultsContainer.classList.add('hidden');
         return;
       }
 
       resultsContainer.innerHTML = results.map(product => `
-        <div class="p-3 hover:bg-indigo-50 cursor-pointer border-b last:border-b-0 transition" onclick="selectProductFromSearch('${product.__backendId}')">
+        <div class="p-3 hover:bg-indigo-50 cursor-pointer border-b last:border-b-0 transition" onclick="selectProductFromSearch('${product.id}')">
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <h4 class="font-semibold text-sm text-gray-800">${product.name}</h4>
@@ -783,8 +861,8 @@
       resultsContainer.classList.remove('hidden');
     }
 
-    function selectProductFromSearch(backendId) {
-      addToCart(backendId);
+    function selectProductFromSearch(id) {
+      addToCart(id);
       document.getElementById('barcode-input').value = '';
       document.getElementById('search-results').classList.add('hidden');
     }
@@ -811,8 +889,8 @@
       }
     });
 
-    function addToCart(backendId) {
-      const product = products.find(p => p.__backendId === backendId);
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
       if (!product) {
         showNotification('Produk tidak ditemukan!', 'error');
         return;
@@ -823,7 +901,7 @@
         return;
       }
 
-      const cartItem = cart.find(item => item.backendId === backendId);
+      const cartItem = cart.find(item => item.id === id);
       if (cartItem) {
         if (cartItem.quantity >= product.stock) {
           showNotification('Stok tidak mencukupi!', 'error');
@@ -832,7 +910,7 @@
         cartItem.quantity++;
       } else {
         cart.push({
-          backendId: backendId,
+          id: id,
           barcode: product.barcode,
           name: product.name,
           price: product.price,
@@ -919,7 +997,7 @@
 
     function increaseQuantity(index) {
       const item = cart[index];
-      const product = products.find(p => p.__backendId === item.backendId);
+      const product = products.find(p => p.id === item.id);
       
       if (item.quantity >= product.stock) {
         showNotification('Stok tidak mencukupi!', 'error');
@@ -989,30 +1067,18 @@
 
       const change = paid - total;
 
-      showLoading();
-
       // Update stock for each product
       for (const item of cart) {
-        const product = products.find(p => p.__backendId === item.backendId);
+        const product = products.find(p => p.id === item.id);
         if (product) {
-          const updatedProduct = {
-            ...product,
-            stock: product.stock - item.quantity
-          };
-          
-          const updateResult = await window.dataSdk.update(updatedProduct);
-          
-          if (!updateResult.isOk) {
-            hideLoading();
-            showNotification('Gagal mengupdate stok produk!', 'error');
-            return;
-          }
+          const newStock = product.stock - item.quantity;
+          await updateInSheet('product', product.id, { ...product, stock: newStock });
         }
       }
 
       // Save transaction
       const transaction = {
-        type: 'transaction',
+        id: 'TRX' + Date.now(),
         date: new Date().toISOString(),
         cashier: currentCashier,
         items: JSON.stringify(cart),
@@ -1021,14 +1087,7 @@
         change: change
       };
 
-      const createResult = await window.dataSdk.create(transaction);
-
-      hideLoading();
-
-      if (!createResult.isOk) {
-        showNotification('Gagal menyimpan transaksi!', 'error');
-        return;
-      }
+      await saveToSheet('transaction', transaction);
 
       // Print receipt
       printReceipt({
@@ -1110,7 +1169,7 @@
             <i class="fas ${cat.icon} text-3xl text-indigo-600"></i>
             <span class="font-semibold text-gray-800">${cat.name}</span>
           </div>
-          <button onclick="deleteCategory('${cat.__backendId}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition">
+          <button onclick="deleteCategory('${cat.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition">
             Hapus
           </button>
         </div>
@@ -1131,29 +1190,23 @@
         return;
       }
 
-      showLoading();
-
       const newCategory = {
-        type: 'category',
+        id: 'CAT' + Date.now(),
         name: name,
         icon: icon
       };
 
-      const result = await window.dataSdk.create(newCategory);
+      const success = await saveToSheet('category', newCategory);
 
-      hideLoading();
-
-      if (result.isOk) {
+      if (success) {
         document.getElementById('new-category-name').value = '';
         document.getElementById('new-category-icon').value = '';
         showNotification('Kategori berhasil ditambahkan!', 'success');
-      } else {
-        showNotification('Gagal menambahkan kategori!', 'error');
       }
     }
 
-    async function deleteCategory(backendId) {
-      const category = categories.find(c => c.__backendId === backendId);
+    async function deleteCategory(id) {
+      const category = categories.find(c => c.id === id);
       const productsInCategory = products.filter(p => p.category === category.name).length;
 
       if (productsInCategory > 0) {
@@ -1168,7 +1221,7 @@
           <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
           <p class="mb-6">Apakah Anda yakin ingin menghapus kategori "${category.name}"?</p>
           <div class="flex gap-2">
-            <button onclick="confirmDeleteCategory('${backendId}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
+            <button onclick="confirmDeleteCategory('${id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
             <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded font-medium">Batal</button>
           </div>
         </div>
@@ -1176,21 +1229,13 @@
       document.body.appendChild(confirmDiv);
     }
 
-    async function confirmDeleteCategory(backendId) {
-      const category = categories.find(c => c.__backendId === backendId);
-      
-      showLoading();
-      
-      const result = await window.dataSdk.delete(category);
-      
-      hideLoading();
+    async function confirmDeleteCategory(id) {
+      const success = await deleteFromSheet('category', id);
       
       document.querySelector('.fixed.inset-0').remove();
       
-      if (result.isOk) {
+      if (success) {
         showNotification('Kategori berhasil dihapus!', 'success');
-      } else {
-        showNotification('Gagal menghapus kategori!', 'error');
       }
     }
 
@@ -1224,7 +1269,7 @@
             <i class="fas fa-user-circle text-3xl text-blue-600"></i>
             <span class="font-semibold text-gray-800">${cashier.name}</span>
           </div>
-          <button onclick="deleteCashier('${cashier.__backendId}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition ml-2">
+          <button onclick="deleteCashier('${cashier.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition ml-2">
             Hapus
           </button>
         </div>
@@ -1244,27 +1289,21 @@
         return;
       }
 
-      showLoading();
-
       const newCashier = {
-        type: 'cashier',
+        id: 'CSH' + Date.now(),
         name: name
       };
 
-      const result = await window.dataSdk.create(newCashier);
+      const success = await saveToSheet('cashier', newCashier);
 
-      hideLoading();
-
-      if (result.isOk) {
+      if (success) {
         document.getElementById('new-cashier-name').value = '';
         showNotification('Kasir berhasil ditambahkan!', 'success');
-      } else {
-        showNotification('Gagal menambahkan kasir!', 'error');
       }
     }
 
-    async function deleteCashier(backendId) {
-      const cashier = cashiers.find(c => c.__backendId === backendId);
+    async function deleteCashier(id) {
+      const cashier = cashiers.find(c => c.id === id);
 
       if (cashier.name === currentCashier) {
         showNotification('Tidak bisa hapus kasir yang sedang login!', 'error');
@@ -1278,7 +1317,7 @@
           <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
           <p class="mb-6">Apakah Anda yakin ingin menghapus kasir "${cashier.name}"?</p>
           <div class="flex gap-2">
-            <button onclick="confirmDeleteCashier('${backendId}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
+            <button onclick="confirmDeleteCashier('${id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
             <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded font-medium">Batal</button>
           </div>
         </div>
@@ -1286,21 +1325,13 @@
       document.body.appendChild(confirmDiv);
     }
 
-    async function confirmDeleteCashier(backendId) {
-      const cashier = cashiers.find(c => c.__backendId === backendId);
-      
-      showLoading();
-      
-      const result = await window.dataSdk.delete(cashier);
-      
-      hideLoading();
+    async function confirmDeleteCashier(id) {
+      const success = await deleteFromSheet('cashier', id);
       
       document.querySelector('.fixed.inset-0').remove();
       
-      if (result.isOk) {
+      if (success) {
         showNotification('Kasir berhasil dihapus!', 'success');
-      } else {
-        showNotification('Gagal menghapus kasir!', 'error');
       }
     }
 
@@ -1354,10 +1385,8 @@
         return;
       }
 
-      showLoading();
-
       const newProduct = {
-        type: 'product',
+        id: 'PRD' + Date.now(),
         barcode: barcode,
         name: name,
         category: category,
@@ -1366,15 +1395,11 @@
         minStock: minStock
       };
 
-      const result = await window.dataSdk.create(newProduct);
+      const success = await saveToSheet('product', newProduct);
 
-      hideLoading();
-
-      if (result.isOk) {
+      if (success) {
         hideAddProductForm();
         showNotification('Produk berhasil ditambahkan!', 'success');
-      } else {
-        showNotification('Gagal menambahkan produk!', 'error');
       }
     }
 
@@ -1406,13 +1431,13 @@
             <span class="text-gray-500 text-xs">(Min: ${product.minStock})</span>
           </td>
           <td class="px-4 py-3 text-sm">
-            <button onclick="updateStock('${product.__backendId}', 10)" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs mr-1">
+            <button onclick="updateStock('${product.id}', 10)" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs mr-1">
               +10
             </button>
-            <button onclick="updateStock('${product.__backendId}', -10)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs mr-1">
+            <button onclick="updateStock('${product.id}', -10)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs mr-1">
               -10
             </button>
-            <button onclick="deleteProduct('${product.__backendId}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
+            <button onclick="deleteProduct('${product.id}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
               Hapus
             </button>
           </td>
@@ -1420,26 +1445,13 @@
       `).join('');
     }
 
-    async function updateStock(backendId, change) {
-      const product = products.find(p => p.__backendId === backendId);
-      
-      showLoading();
-      
-      const updatedProduct = {
-        ...product,
-        stock: Math.max(0, product.stock + change)
-      };
-      
-      const result = await window.dataSdk.update(updatedProduct);
-      
-      hideLoading();
-      
-      if (!result.isOk) {
-        showNotification('Gagal mengupdate stok!', 'error');
-      }
+    async function updateStock(id, change) {
+      const product = products.find(p => p.id === id);
+      const newStock = Math.max(0, product.stock + change);
+      await updateInSheet('product', id, { ...product, stock: newStock });
     }
 
-    async function deleteProduct(backendId) {
+    async function deleteProduct(id) {
       const confirmDiv = document.createElement('div');
       confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
       confirmDiv.innerHTML = `
@@ -1447,7 +1459,7 @@
           <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
           <p class="mb-6">Apakah Anda yakin ingin menghapus produk ini?</p>
           <div class="flex gap-2">
-            <button onclick="confirmDeleteProduct('${backendId}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Ya, Hapus</button>
+            <button onclick="confirmDeleteProduct('${id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Ya, Hapus</button>
             <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded">Batal</button>
           </div>
         </div>
@@ -1455,21 +1467,13 @@
       document.body.appendChild(confirmDiv);
     }
 
-    async function confirmDeleteProduct(backendId) {
-      const product = products.find(p => p.__backendId === backendId);
-      
-      showLoading();
-      
-      const result = await window.dataSdk.delete(product);
-      
-      hideLoading();
+    async function confirmDeleteProduct(id) {
+      const success = await deleteFromSheet('product', id);
       
       document.querySelector('.fixed.inset-0').remove();
       
-      if (result.isOk) {
+      if (success) {
         showNotification('Produk berhasil dihapus!', 'success');
-      } else {
-        showNotification('Gagal menghapus produk!', 'error');
       }
     }
 
@@ -1719,7 +1723,7 @@
 
       const product = products.find(p => p.barcode === barcode);
       if (product) {
-        addToCart(product.__backendId);
+        addToCart(product.id);
         showNotification(`✅ ${product.name} ditambahkan ke keranjang!`, 'success');
       } else {
         showNotification(`❌ Barcode ${barcode} tidak ditemukan!`, 'error');
@@ -1745,9 +1749,10 @@
     }
 
     // Initialize app when page loads
-    document.addEventListener('DOMContentLoaded', () => {
-      initializeApp();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initializeApp();
+      renderCashierButtons();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b7161b745e6fdf3',t:'MTc2NzI2Mzg1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71852c679b6bb2',t:'MTc2NzI2NTMwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
