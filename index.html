@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
   <script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
   <style>
     body {
@@ -68,11 +69,29 @@
         opacity: .5;
       }
     }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
- <body class="h-full bg-gray-50"><!-- Pemilihan Kasir Screen -->
+ <body class="h-full bg-gray-50"><!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+   <div class="bg-white rounded-xl p-8 shadow-2xl text-center"><i class="fas fa-spinner fa-spin text-6xl text-indigo-600 mb-4"></i>
+    <p class="text-xl font-bold text-gray-800">Memproses...</p>
+    <p class="text-sm text-gray-600 mt-2">Mohon tunggu sebentar</p>
+   </div>
+  </div><!-- Pemilihan Kasir Screen -->
   <div id="cashier-selection" class="h-full flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
    <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-2xl w-full mx-4">
     <div class="text-center mb-10">
@@ -84,15 +103,7 @@
      <p class="text-gray-600 text-sm font-medium">Dashboard Point of Sale System</p>
     </div>
     <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Pilih Kasir Bertugas</h2>
-    <div class="grid grid-cols-2 gap-4"><button onclick="selectCashier('Ahmad Yasin')" class="group bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-      <div class="flex items-center justify-center gap-3"><i class="fas fa-user text-3xl"></i> <span class="text-lg">Ahmad Yasin</span>
-      </div></button> <button onclick="selectCashier('Muh. Rifki')" class="group bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-      <div class="flex items-center justify-center gap-3"><i class="fas fa-user text-3xl"></i> <span class="text-lg">Muh. Rifki</span>
-      </div></button> <button onclick="selectCashier('Baso Ismail')" class="group bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-      <div class="flex items-center justify-center gap-3"><i class="fas fa-user text-3xl"></i> <span class="text-lg">Baso Ismail</span>
-      </div></button> <button onclick="selectCashier('Rahma')" class="group bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-      <div class="flex items-center justify-center gap-3"><i class="fas fa-user text-3xl"></i> <span class="text-lg">Rahma</span>
-      </div></button>
+    <div id="cashier-buttons-grid" class="grid grid-cols-2 gap-4"><!-- Cashier buttons will be rendered here -->
     </div>
     <div class="mt-8 text-center text-xs text-gray-500 bg-gray-50 p-4 rounded-lg">
      <p class="font-medium">📍 Jl. Poros Palopo - Makassar</p>
@@ -149,7 +160,7 @@
        <div id="search-results" class="hidden mt-3 bg-white rounded-lg shadow-lg border-2 border-indigo-200 max-h-64 overflow-y-auto"></div>
       </div>
      </div><!-- Category Tabs -->
-     <div class="flex gap-2 mb-4 overflow-x-auto pb-2"><button onclick="filterCategory('all')" class="category-btn bg-purple-500 text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap"> Semua </button> <button onclick="filterCategory('Gas LPG')" class="category-btn bg-gray-200 text-gray-700 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap hover:bg-gray-300"> Gas LPG </button> <button onclick="filterCategory('Alat Tulis')" class="category-btn bg-gray-200 text-gray-700 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap hover:bg-gray-300"> Alat Tulis </button> <button onclick="filterCategory('Minuman')" class="category-btn bg-gray-200 text-gray-700 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap hover:bg-gray-300"> Minuman </button> <button onclick="filterCategory('Snack Cemilan')" class="category-btn bg-gray-200 text-gray-700 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap hover:bg-gray-300"> Snack Cemilan </button> <button onclick="filterCategory('Mie')" class="category-btn bg-gray-200 text-gray-700 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap hover:bg-gray-300"> Mie </button> <button onclick="filterCategory('Perlengkapan Bayi')" class="category-btn bg-gray-200 text-gray-700 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap hover:bg-gray-300"> Perlengkapan Bayi </button>
+     <div id="category-tabs" class="flex gap-2 mb-4 overflow-x-auto pb-2"><!-- Category tabs will be rendered here -->
      </div><!-- Products Grid -->
      <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"><!-- Products will be rendered here -->
      </div>
@@ -240,7 +251,7 @@
     <div class="p-4 md:p-6">
      <div class="mb-6 bg-blue-50 p-3 md:p-4 rounded-lg border-2 border-blue-200">
       <h3 class="font-semibold mb-3 text-indigo-900 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-plus-circle"></i> Tambah Kategori Baru</h3>
-      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">��� Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">🍞 Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">🍕 Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">������ Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
+      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">🍎 Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">🍞 Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">🍕 Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">🧀 Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
       </div>
      </div>
      <h3 class="font-semibold mb-4 text-gray-800 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-list"></i> Daftar Kategori</h3>
@@ -453,74 +464,132 @@
     let scannerStream = null;
     let isScanning = false;
 
-    // Cashiers data
-    let cashiers = [
-      'Ahmad Yasin',
-      'Muh. Rifki',
-      'Baso Ismail',
-      'Rahma'
+    // Data arrays - will be populated from Data SDK
+    let allData = [];
+    let products = [];
+    let categories = [];
+    let cashiers = [];
+    let transactions = [];
+    
+    // Default data to be created on first load
+    const defaultCashiers = [
+      { name: 'Siti Aminah' },
+      { name: 'Budi Santoso' },
+      { name: 'Rina Wijaya' },
+      { name: 'Ahmad Hidayat' }
     ];
-
-    // Categories data
-    let categories = [
-      { name: 'Gas LPG', icon: 'fa-fire' },
-      { name: 'Alat Tulis', icon: 'fa-pen' },
+    
+    const defaultCategories = [
+      { name: 'Makanan', icon: 'fa-bowl-food' },
       { name: 'Minuman', icon: 'fa-mug-hot' },
-      { name: 'Snack Cemilan', icon: 'fa-cookie-bite' },
-      { name: 'Mie', icon: 'fa-bowl-food' },
+      { name: 'Snack', icon: 'fa-cookie-bite' },
+      { name: 'Alat Tulis', icon: 'fa-pen' },
       { name: 'Perlengkapan Bayi', icon: 'fa-baby' }
     ];
 
-    // Sample products data
-    let products = [
-      { barcode: '8991002001015', name: 'Gas LPG 3kg', category: 'Gas LPG', price: 22000, stock: 50, minStock: 10 },
-      { barcode: '8991002001022', name: 'Gas LPG 12kg', category: 'Gas LPG', price: 155000, stock: 30, minStock: 5 },
-      { barcode: '8992761111014', name: 'Pulpen Standard AE7', category: 'Alat Tulis', price: 2500, stock: 100, minStock: 20 },
-      { barcode: '8992761222015', name: 'Buku Tulis 38 Lembar', category: 'Alat Tulis', price: 3500, stock: 150, minStock: 30 },
-      { barcode: '8992761333016', name: 'Pensil 2B', category: 'Alat Tulis', price: 2000, stock: 200, minStock: 50 },
-      { barcode: '8996001600016', name: 'Aqua 600ml', category: 'Minuman', price: 4000, stock: 120, minStock: 30 },
-      { barcode: '8996001601013', name: 'Aqua 1500ml', category: 'Minuman', price: 7000, stock: 80, minStock: 20 },
-      { barcode: '8992745111019', name: 'Teh Botol Sosro 450ml', category: 'Minuman', price: 5000, stock: 100, minStock: 25 },
-      { barcode: '8991389111017', name: 'Chitato Rasa Sapi Panggang', category: 'Snack Cemilan', price: 10000, stock: 75, minStock: 15 },
-      { barcode: '8992753111011', name: 'Taro Cokelat', category: 'Snack Cemilan', price: 8000, stock: 90, minStock: 20 },
-      { barcode: '8992388111018', name: 'Indomie Goreng', category: 'Mie', price: 3500, stock: 200, minStock: 50 },
-      { barcode: '8992388222019', name: 'Indomie Soto', category: 'Mie', price: 3500, stock: 180, minStock: 50 },
-      { barcode: '8993417111012', name: 'Popok Bayi Merries M', category: 'Perlengkapan Bayi', price: 85000, stock: 25, minStock: 5 },
-      { barcode: '8993417222013', name: 'Susu SGM 400gr', category: 'Perlengkapan Bayi', price: 45000, stock: 40, minStock: 10 }
-    ];
+    // Data SDK Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        allData = data;
+        
+        // Separate data by type
+        products = data.filter(d => d.type === 'product');
+        categories = data.filter(d => d.type === 'category');
+        cashiers = data.filter(d => d.type === 'cashier');
+        transactions = data.filter(d => d.type === 'transaction');
 
-    // Load from localStorage
-    function loadData() {
-      const savedProducts = localStorage.getItem('mabash_products');
-      if (savedProducts) {
-        products = JSON.parse(savedProducts);
+        // Update UI based on current screen
+        if (!document.getElementById('cashier-selection').classList.contains('hidden')) {
+          renderCashierButtons();
+        }
+        
+        if (!document.getElementById('pos-screen').classList.contains('hidden')) {
+          renderProducts();
+          renderCategoryTabs();
+        }
+
+        // Update modals if they're open
+        if (!document.getElementById('cashier-modal').classList.contains('hidden')) {
+          renderCashiersList();
+        }
+        
+        if (!document.getElementById('category-modal').classList.contains('hidden')) {
+          renderCategoriesList();
+        }
+        
+        if (!document.getElementById('stock-modal').classList.contains('hidden')) {
+          renderStockTable();
+        }
+        
+        if (!document.getElementById('reports-modal').classList.contains('hidden')) {
+          renderReports();
+        }
+      }
+    };
+
+    // Initialize Data SDK and create default data
+    async function initializeApp() {
+      showLoading();
+      
+      const initResult = await window.dataSdk.init(dataHandler);
+      
+      if (!initResult.isOk) {
+        console.error('Failed to initialize Data SDK');
+        showNotification('Gagal menginisialisasi aplikasi', 'error');
+        hideLoading();
+        return;
       }
       
-      const savedCategories = localStorage.getItem('mabash_categories');
-      if (savedCategories) {
-        categories = JSON.parse(savedCategories);
+      // Check if we need to create default data
+      await createDefaultDataIfNeeded();
+      
+      hideLoading();
+    }
+
+    async function createDefaultDataIfNeeded() {
+      // Wait a bit for onDataChanged to populate arrays
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Create default cashiers if none exist
+      if (cashiers.length === 0) {
+        for (const cashier of defaultCashiers) {
+          const result = await window.dataSdk.create({
+            type: 'cashier',
+            name: cashier.name
+          });
+          
+          if (!result.isOk) {
+            console.error('Failed to create default cashier:', cashier.name);
+          }
+        }
       }
-
-      const savedCashiers = localStorage.getItem('mabash_cashiers');
-      if (savedCashiers) {
-        cashiers = JSON.parse(savedCashiers);
+      
+      // Create default categories if none exist
+      if (categories.length === 0) {
+        for (const category of defaultCategories) {
+          const result = await window.dataSdk.create({
+            type: 'category',
+            name: category.name,
+            icon: category.icon
+          });
+          
+          if (!result.isOk) {
+            console.error('Failed to create default category:', category.name);
+          }
+        }
       }
     }
 
-    function saveProducts() {
-      localStorage.setItem('mabash_products', JSON.stringify(products));
+    function showLoading() {
+      document.getElementById('loading-overlay').classList.remove('hidden');
     }
 
-    function saveCategories() {
-      localStorage.setItem('mabash_categories', JSON.stringify(categories));
-    }
-
-    function saveCashiers() {
-      localStorage.setItem('mabash_cashiers', JSON.stringify(cashiers));
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.add('hidden');
     }
 
     function renderCashierButtons() {
-      const container = document.querySelector('#cashier-selection .grid');
+      const container = document.getElementById('cashier-buttons-grid');
       const colors = [
         'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
         'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700',
@@ -532,11 +601,22 @@
         'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
       ];
 
+      if (cashiers.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-2 text-center py-8 text-gray-500">
+            <i class="fas fa-spinner fa-spin text-5xl mb-3"></i>
+            <p>Memuat data kasir...</p>
+            <p class="text-sm mt-2">Mohon tunggu sebentar</p>
+          </div>
+        `;
+        return;
+      }
+
       container.innerHTML = cashiers.map((cashier, index) => `
-        <button onclick="selectCashier('${cashier}')" class="group bg-gradient-to-br ${colors[index % colors.length]} text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+        <button onclick="selectCashier('${cashier.name}')" class="group bg-gradient-to-br ${colors[index % colors.length]} text-white font-semibold py-6 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
           <div class="flex items-center justify-center gap-3">
             <i class="fas fa-user text-3xl"></i>
-            <span class="text-lg">${cashier}</span>
+            <span class="text-lg">${cashier.name}</span>
           </div>
         </button>
       `).join('');
@@ -549,6 +629,7 @@
       document.getElementById('current-cashier').textContent = name;
       document.getElementById('mobile-cashier-name').textContent = name;
       renderProducts();
+      renderCategoryTabs();
     }
 
     function logout() {
@@ -574,25 +655,16 @@
 
     function filterCategory(category) {
       currentCategory = category;
-      
-      const buttons = document.querySelectorAll('.category-btn');
-      buttons.forEach(btn => {
-        btn.classList.remove('bg-purple-500', 'text-white');
-        btn.classList.add('bg-gray-200', 'text-gray-700');
-      });
-      
-      event.target.classList.remove('bg-gray-200', 'text-gray-700');
-      event.target.classList.add('bg-purple-500', 'text-white');
-      
+      renderCategoryTabs();
       renderProducts();
     }
 
     function renderCategoryTabs() {
-      const tabsContainer = document.querySelector('.flex.gap-2.mb-4');
+      const tabsContainer = document.getElementById('category-tabs');
       
       let tabsHtml = `
         <button onclick="filterCategory('all')" class="category-btn ${currentCategory === 'all' ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-purple-400">
-          <i class="fas fa-th-large"></i> Semua Produk
+          <i class="fas fa-th-large"></i> Semua
         </button>
       `;
       
@@ -608,15 +680,24 @@
     }
 
     function renderProducts() {
-      renderCategoryTabs();
-      
       const grid = document.getElementById('products-grid');
       const filteredProducts = currentCategory === 'all' 
         ? products 
         : products.filter(p => p.category === currentCategory);
       
+      if (filteredProducts.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-gray-400">
+            <i class="fas fa-box-open text-6xl mb-4 opacity-30"></i>
+            <p class="text-lg">Belum ada produk</p>
+            <p class="text-sm mt-2">Tambahkan produk melalui menu Kelola Stok</p>
+          </div>
+        `;
+        return;
+      }
+
       grid.innerHTML = filteredProducts.map(product => `
-        <div class="bg-white border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer ${product.stock <= product.minStock ? 'border-red-500' : 'border-gray-200'}" onclick="addToCart('${product.barcode}')">
+        <div class="bg-white border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer ${product.stock <= product.minStock ? 'border-red-500' : 'border-gray-200'}" onclick="addToCart('${product.__backendId}')">
           <div class="text-center mb-2">
             <div class="mb-2">${getCategoryIcon(product.category)}</div>
             <h3 class="font-semibold text-sm mb-1">${product.name}</h3>
@@ -633,15 +714,20 @@
     }
 
     function getCategoryIcon(categoryName) {
-      const iconMap = {
-        'Gas LPG': '<i class="fas fa-fire text-orange-500 text-4xl"></i>',
-        'Alat Tulis': '<i class="fas fa-pen text-blue-500 text-4xl"></i>',
-        'Minuman': '<i class="fas fa-mug-hot text-cyan-500 text-4xl"></i>',
-        'Snack Cemilan': '<i class="fas fa-cookie-bite text-yellow-600 text-4xl"></i>',
-        'Mie': '<i class="fas fa-bowl-food text-red-500 text-4xl"></i>',
-        'Perlengkapan Bayi': '<i class="fas fa-baby text-pink-500 text-4xl"></i>'
+      const category = categories.find(c => c.name === categoryName);
+      const icon = category ? category.icon : 'fa-box';
+      
+      const colorMap = {
+        'fa-fire': 'text-orange-500',
+        'fa-pen': 'text-blue-500',
+        'fa-mug-hot': 'text-cyan-500',
+        'fa-cookie-bite': 'text-yellow-600',
+        'fa-bowl-food': 'text-red-500',
+        'fa-baby': 'text-pink-500'
       };
-      return iconMap[categoryName] || '<i class="fas fa-box text-gray-500 text-4xl"></i>';
+      
+      const color = colorMap[icon] || 'text-gray-500';
+      return `<i class="fas ${icon} ${color} text-4xl"></i>`;
     }
 
     function searchProduct() {
@@ -651,7 +737,6 @@
         return;
       }
 
-      // Cari berdasarkan barcode atau nama produk
       const results = products.filter(p => 
         p.barcode.toLowerCase().includes(query) || 
         p.name.toLowerCase().includes(query)
@@ -670,18 +755,16 @@
         return;
       }
 
-      // Jika barcode exact match, langsung tambahkan ke keranjang
       const exactMatch = products.find(p => p.barcode === query);
       if (exactMatch) {
-        addToCart(exactMatch.barcode);
+        addToCart(exactMatch.__backendId);
         document.getElementById('barcode-input').value = '';
         resultsContainer.classList.add('hidden');
         return;
       }
 
-      // Tampilkan hasil pencarian
       resultsContainer.innerHTML = results.map(product => `
-        <div class="p-3 hover:bg-indigo-50 cursor-pointer border-b last:border-b-0 transition" onclick="selectProductFromSearch('${product.barcode}')">
+        <div class="p-3 hover:bg-indigo-50 cursor-pointer border-b last:border-b-0 transition" onclick="selectProductFromSearch('${product.__backendId}')">
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <h4 class="font-semibold text-sm text-gray-800">${product.name}</h4>
@@ -700,13 +783,12 @@
       resultsContainer.classList.remove('hidden');
     }
 
-    function selectProductFromSearch(barcode) {
-      addToCart(barcode);
+    function selectProductFromSearch(backendId) {
+      addToCart(backendId);
       document.getElementById('barcode-input').value = '';
       document.getElementById('search-results').classList.add('hidden');
     }
 
-    // Real-time search saat mengetik
     document.getElementById('barcode-input').addEventListener('input', function() {
       const query = this.value.trim();
       if (query.length >= 2) {
@@ -722,7 +804,6 @@
       }
     });
 
-    // Tutup hasil pencarian saat klik di luar
     document.addEventListener('click', function(e) {
       const searchContainer = e.target.closest('#barcode-input, #search-results');
       if (!searchContainer) {
@@ -730,8 +811,8 @@
       }
     });
 
-    function addToCart(barcode) {
-      const product = products.find(p => p.barcode === barcode);
+    function addToCart(backendId) {
+      const product = products.find(p => p.__backendId === backendId);
       if (!product) {
         showNotification('Produk tidak ditemukan!', 'error');
         return;
@@ -742,7 +823,7 @@
         return;
       }
 
-      const cartItem = cart.find(item => item.barcode === barcode);
+      const cartItem = cart.find(item => item.backendId === backendId);
       if (cartItem) {
         if (cartItem.quantity >= product.stock) {
           showNotification('Stok tidak mencukupi!', 'error');
@@ -751,6 +832,7 @@
         cartItem.quantity++;
       } else {
         cart.push({
+          backendId: backendId,
           barcode: product.barcode,
           name: product.name,
           price: product.price,
@@ -762,14 +844,12 @@
     }
 
     function updateCart() {
-      // Desktop cart
       const cartContainerDesktop = document.getElementById('cart-items-desktop');
       const btnPaymentDesktop = document.getElementById('btn-payment-desktop');
       const btnClearDesktop = document.getElementById('btn-clear-desktop');
       const cartCountDesktop = document.getElementById('cart-count-desktop');
       const itemCountDesktop = document.getElementById('item-count-desktop');
       
-      // Mobile cart
       const cartContainerMobile = document.getElementById('cart-items-mobile');
       const btnPaymentMobile = document.getElementById('btn-payment-mobile');
       const btnClearMobile = document.getElementById('btn-clear-mobile');
@@ -805,7 +885,6 @@
           </div>
         `).join('');
       
-      // Update both desktop and mobile
       cartContainerDesktop.innerHTML = cartItemsHtml;
       cartContainerMobile.innerHTML = cartItemsHtml;
       
@@ -835,13 +914,12 @@
       document.getElementById('subtotal-mobile').textContent = formattedSubtotal;
       document.getElementById('total-mobile').textContent = formattedSubtotal;
       
-      // Update cart badge
       cartBadge.textContent = totalItems;
     }
 
     function increaseQuantity(index) {
       const item = cart[index];
-      const product = products.find(p => p.barcode === item.barcode);
+      const product = products.find(p => p.__backendId === item.backendId);
       
       if (item.quantity >= product.stock) {
         showNotification('Stok tidak mencukupi!', 'error');
@@ -900,7 +978,7 @@
       document.getElementById('payment-modal').classList.add('hidden');
     }
 
-    function confirmPayment() {
+    async function confirmPayment() {
       const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const paid = parseFloat(document.getElementById('payment-amount').value) || 0;
       
@@ -911,31 +989,52 @@
 
       const change = paid - total;
 
-      // Update stock
-      cart.forEach(item => {
-        const product = products.find(p => p.barcode === item.barcode);
+      showLoading();
+
+      // Update stock for each product
+      for (const item of cart) {
+        const product = products.find(p => p.__backendId === item.backendId);
         if (product) {
-          product.stock -= item.quantity;
+          const updatedProduct = {
+            ...product,
+            stock: product.stock - item.quantity
+          };
+          
+          const updateResult = await window.dataSdk.update(updatedProduct);
+          
+          if (!updateResult.isOk) {
+            hideLoading();
+            showNotification('Gagal mengupdate stok produk!', 'error');
+            return;
+          }
         }
-      });
-      saveProducts();
+      }
 
       // Save transaction
       const transaction = {
+        type: 'transaction',
         date: new Date().toISOString(),
         cashier: currentCashier,
-        items: [...cart],
+        items: JSON.stringify(cart),
         total: total,
         paid: paid,
         change: change
       };
 
-      const transactions = JSON.parse(localStorage.getItem('mabash_transactions') || '[]');
-      transactions.push(transaction);
-      localStorage.setItem('mabash_transactions', JSON.stringify(transactions));
+      const createResult = await window.dataSdk.create(transaction);
+
+      hideLoading();
+
+      if (!createResult.isOk) {
+        showNotification('Gagal menyimpan transaksi!', 'error');
+        return;
+      }
 
       // Print receipt
-      printReceipt(transaction);
+      printReceipt({
+        ...transaction,
+        items: cart
+      });
 
       // Clear cart
       cart = [];
@@ -952,7 +1051,6 @@
       document.getElementById('receipt-date').textContent = now.toLocaleDateString('id-ID');
       document.getElementById('receipt-time').textContent = now.toLocaleTimeString('id-ID');
 
-      // Generate receipt items as table rows
       let itemsHtml = '<tr style="border-bottom: 1px solid black;"><th style="padding: 5px 0; text-align: left;">Item</th><th style="padding: 5px 0; text-align: center;">Qty</th><th style="padding: 5px 0; text-align: right;">Harga</th><th style="padding: 5px 0; text-align: right;">Total</th></tr>';
 
       transaction.items.forEach(item => {
@@ -965,7 +1063,6 @@
       });
 
       document.getElementById('receipt-items').innerHTML = itemsHtml;
-
       document.getElementById('receipt-total').textContent = 'Rp ' + transaction.total.toLocaleString('id-ID');
       document.getElementById('receipt-paid').textContent = 'Rp ' + transaction.paid.toLocaleString('id-ID');
       document.getElementById('receipt-change').textContent = 'Rp ' + transaction.change.toLocaleString('id-ID');
@@ -973,7 +1070,6 @@
       const receiptDiv = document.getElementById('receipt-print');
       receiptDiv.style.display = 'block';
       
-      // Better print handling for mobile
       setTimeout(() => {
         window.print();
         setTimeout(() => {
@@ -992,24 +1088,36 @@
       document.getElementById('new-category-name').value = '';
       document.getElementById('new-category-icon').value = '';
       renderProducts();
+      renderCategoryTabs();
     }
 
     function renderCategoriesList() {
       const container = document.getElementById('categories-list');
-      container.innerHTML = categories.map((cat, index) => `
+      
+      if (categories.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-2 text-center py-8 text-gray-400">
+            <i class="fas fa-tags text-5xl mb-3 opacity-30"></i>
+            <p>Belum ada kategori</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = categories.map((cat) => `
         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 p-4 rounded-lg flex items-center justify-between hover:shadow-md transition">
           <div class="flex items-center gap-3">
             <i class="fas ${cat.icon} text-3xl text-indigo-600"></i>
             <span class="font-semibold text-gray-800">${cat.name}</span>
           </div>
-          <button onclick="deleteCategory(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition">
+          <button onclick="deleteCategory('${cat.__backendId}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition">
             Hapus
           </button>
         </div>
       `).join('');
     }
 
-    function addNewCategory() {
+    async function addNewCategory() {
       const name = document.getElementById('new-category-name').value.trim();
       const icon = document.getElementById('new-category-icon').value.trim();
 
@@ -1023,16 +1131,29 @@
         return;
       }
 
-      categories.push({ name, icon });
-      saveCategories();
-      renderCategoriesList();
-      document.getElementById('new-category-name').value = '';
-      document.getElementById('new-category-icon').value = '';
-      showNotification('Kategori berhasil ditambahkan!', 'success');
+      showLoading();
+
+      const newCategory = {
+        type: 'category',
+        name: name,
+        icon: icon
+      };
+
+      const result = await window.dataSdk.create(newCategory);
+
+      hideLoading();
+
+      if (result.isOk) {
+        document.getElementById('new-category-name').value = '';
+        document.getElementById('new-category-icon').value = '';
+        showNotification('Kategori berhasil ditambahkan!', 'success');
+      } else {
+        showNotification('Gagal menambahkan kategori!', 'error');
+      }
     }
 
-    function deleteCategory(index) {
-      const category = categories[index];
+    async function deleteCategory(backendId) {
+      const category = categories.find(c => c.__backendId === backendId);
       const productsInCategory = products.filter(p => p.category === category.name).length;
 
       if (productsInCategory > 0) {
@@ -1040,30 +1161,39 @@
         return;
       }
 
-      const confirmDelete = document.createElement('div');
-      confirmDelete.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-      confirmDelete.innerHTML = `
+      const confirmDiv = document.createElement('div');
+      confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      confirmDiv.innerHTML = `
         <div class="bg-white rounded-lg p-6 max-w-sm shadow-2xl">
           <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
           <p class="mb-6">Apakah Anda yakin ingin menghapus kategori "${category.name}"?</p>
           <div class="flex gap-2">
-            <button onclick="confirmDeleteCategory(${index})" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
+            <button onclick="confirmDeleteCategory('${backendId}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
             <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded font-medium">Batal</button>
           </div>
         </div>
       `;
-      document.body.appendChild(confirmDelete);
+      document.body.appendChild(confirmDiv);
     }
 
-    function confirmDeleteCategory(index) {
-      categories.splice(index, 1);
-      saveCategories();
-      renderCategoriesList();
+    async function confirmDeleteCategory(backendId) {
+      const category = categories.find(c => c.__backendId === backendId);
+      
+      showLoading();
+      
+      const result = await window.dataSdk.delete(category);
+      
+      hideLoading();
+      
       document.querySelector('.fixed.inset-0').remove();
-      showNotification('Kategori berhasil dihapus!', 'success');
+      
+      if (result.isOk) {
+        showNotification('Kategori berhasil dihapus!', 'success');
+      } else {
+        showNotification('Gagal menghapus kategori!', 'error');
+      }
     }
 
-    // Cashier Management Functions
     function showCashierManagement() {
       renderCashiersList();
       document.getElementById('cashier-modal').classList.remove('hidden');
@@ -1077,20 +1207,31 @@
 
     function renderCashiersList() {
       const container = document.getElementById('cashiers-list');
-      container.innerHTML = cashiers.map((cashier, index) => `
+      
+      if (cashiers.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-2 text-center py-8 text-gray-400">
+            <i class="fas fa-user-circle text-5xl mb-3 opacity-30"></i>
+            <p>Belum ada kasir</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = cashiers.map((cashier) => `
         <div class="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 p-4 rounded-lg flex items-center justify-between hover:shadow-md transition">
           <div class="flex items-center gap-3 flex-1">
             <i class="fas fa-user-circle text-3xl text-blue-600"></i>
-            <input type="text" value="${cashier}" onchange="updateCashierName(${index}, this.value)" class="flex-1 font-semibold text-gray-800 bg-transparent border-b-2 border-transparent hover:border-blue-300 focus:border-blue-500 focus:outline-none px-2 py-1 transition">
+            <span class="font-semibold text-gray-800">${cashier.name}</span>
           </div>
-          <button onclick="deleteCashier(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition ml-2">
+          <button onclick="deleteCashier('${cashier.__backendId}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition ml-2">
             Hapus
           </button>
         </div>
       `).join('');
     }
 
-    function addNewCashier() {
+    async function addNewCashier() {
       const name = document.getElementById('new-cashier-name').value.trim();
 
       if (!name) {
@@ -1098,80 +1239,76 @@
         return;
       }
 
-      if (cashiers.find(c => c.toLowerCase() === name.toLowerCase())) {
+      if (cashiers.find(c => c.name.toLowerCase() === name.toLowerCase())) {
         showNotification('Kasir sudah ada!', 'error');
         return;
       }
 
-      cashiers.push(name);
-      saveCashiers();
-      renderCashiersList();
-      document.getElementById('new-cashier-name').value = '';
-      showNotification('Kasir berhasil ditambahkan!', 'success');
+      showLoading();
+
+      const newCashier = {
+        type: 'cashier',
+        name: name
+      };
+
+      const result = await window.dataSdk.create(newCashier);
+
+      hideLoading();
+
+      if (result.isOk) {
+        document.getElementById('new-cashier-name').value = '';
+        showNotification('Kasir berhasil ditambahkan!', 'success');
+      } else {
+        showNotification('Gagal menambahkan kasir!', 'error');
+      }
     }
 
-    function updateCashierName(index, newName) {
-      const name = newName.trim();
-      
-      if (!name) {
-        showNotification('Nama kasir tidak boleh kosong!', 'error');
-        renderCashiersList();
-        return;
-      }
+    async function deleteCashier(backendId) {
+      const cashier = cashiers.find(c => c.__backendId === backendId);
 
-      if (cashiers.find((c, i) => i !== index && c.toLowerCase() === name.toLowerCase())) {
-        showNotification('Nama kasir sudah ada!', 'error');
-        renderCashiersList();
-        return;
-      }
-
-      const oldName = cashiers[index];
-      cashiers[index] = name;
-      
-      // Update current cashier if it's the one being edited
-      if (currentCashier === oldName) {
-        currentCashier = name;
-        document.getElementById('current-cashier').textContent = name;
-        document.getElementById('mobile-cashier-name').textContent = name;
-      }
-
-      saveCashiers();
-      showNotification('Nama kasir berhasil diperbarui!', 'success');
-    }
-
-    function deleteCashier(index) {
-      const cashier = cashiers[index];
-
-      if (cashier === currentCashier) {
+      if (cashier.name === currentCashier) {
         showNotification('Tidak bisa hapus kasir yang sedang login!', 'error');
         return;
       }
 
-      const confirmDelete = document.createElement('div');
-      confirmDelete.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-      confirmDelete.innerHTML = `
+      const confirmDiv = document.createElement('div');
+      confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      confirmDiv.innerHTML = `
         <div class="bg-white rounded-lg p-6 max-w-sm shadow-2xl">
           <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
-          <p class="mb-6">Apakah Anda yakin ingin menghapus kasir "${cashier}"?</p>
+          <p class="mb-6">Apakah Anda yakin ingin menghapus kasir "${cashier.name}"?</p>
           <div class="flex gap-2">
-            <button onclick="confirmDeleteCashier(${index})" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
+            <button onclick="confirmDeleteCashier('${backendId}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium">Ya, Hapus</button>
             <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded font-medium">Batal</button>
           </div>
         </div>
       `;
-      document.body.appendChild(confirmDelete);
+      document.body.appendChild(confirmDiv);
     }
 
-    function confirmDeleteCashier(index) {
-      cashiers.splice(index, 1);
-      saveCashiers();
-      renderCashiersList();
+    async function confirmDeleteCashier(backendId) {
+      const cashier = cashiers.find(c => c.__backendId === backendId);
+      
+      showLoading();
+      
+      const result = await window.dataSdk.delete(cashier);
+      
+      hideLoading();
+      
       document.querySelector('.fixed.inset-0').remove();
-      showNotification('Kasir berhasil dihapus!', 'success');
+      
+      if (result.isOk) {
+        showNotification('Kasir berhasil dihapus!', 'success');
+      } else {
+        showNotification('Gagal menghapus kasir!', 'error');
+      }
     }
 
     function showStockManagement() {
       renderStockTable();
+      const categorySelect = document.getElementById('new-category');
+      categorySelect.innerHTML = '<option value="">Pilih Kategori</option>' + 
+        categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
       document.getElementById('stock-modal').classList.remove('hidden');
     }
 
@@ -1182,10 +1319,9 @@
     }
 
     function showAddProductForm() {
-      // Populate category dropdown
       const categorySelect = document.getElementById('new-category');
       categorySelect.innerHTML = '<option value="">Pilih Kategori</option>' + 
-        categories.map(cat => `<option value="${cat.name}"><i class="fas ${cat.icon}"></i> ${cat.name}</option>`).join('');
+        categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
       
       document.getElementById('add-product-form').classList.remove('hidden');
     }
@@ -1200,7 +1336,7 @@
       document.getElementById('new-min-stock').value = '';
     }
 
-    function addNewProduct() {
+    async function addNewProduct() {
       const barcode = document.getElementById('new-barcode').value.trim();
       const name = document.getElementById('new-name').value.trim();
       const category = document.getElementById('new-category').value;
@@ -1218,24 +1354,46 @@
         return;
       }
 
-      products.push({
-        barcode,
-        name,
-        category,
-        price,
-        stock,
-        minStock
-      });
+      showLoading();
 
-      saveProducts();
-      hideAddProductForm();
-      renderStockTable();
-      showNotification('Produk berhasil ditambahkan!', 'success');
+      const newProduct = {
+        type: 'product',
+        barcode: barcode,
+        name: name,
+        category: category,
+        price: price,
+        stock: stock,
+        minStock: minStock
+      };
+
+      const result = await window.dataSdk.create(newProduct);
+
+      hideLoading();
+
+      if (result.isOk) {
+        hideAddProductForm();
+        showNotification('Produk berhasil ditambahkan!', 'success');
+      } else {
+        showNotification('Gagal menambahkan produk!', 'error');
+      }
     }
 
     function renderStockTable() {
       const tbody = document.getElementById('stock-table-body');
-      tbody.innerHTML = products.map((product, index) => `
+      
+      if (products.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-4 py-8 text-center text-gray-400">
+              <i class="fas fa-box-open text-5xl mb-3 opacity-30"></i>
+              <p>Belum ada produk</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = products.map((product) => `
         <tr class="${product.stock <= product.minStock ? 'bg-red-50' : ''}">
           <td class="px-4 py-3 text-sm">${product.barcode}</td>
           <td class="px-4 py-3 text-sm">${product.name}</td>
@@ -1248,13 +1406,13 @@
             <span class="text-gray-500 text-xs">(Min: ${product.minStock})</span>
           </td>
           <td class="px-4 py-3 text-sm">
-            <button onclick="updateStock(${index}, 'add')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs mr-1">
+            <button onclick="updateStock('${product.__backendId}', 10)" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs mr-1">
               +10
             </button>
-            <button onclick="updateStock(${index}, 'subtract')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs mr-1">
+            <button onclick="updateStock('${product.__backendId}', -10)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs mr-1">
               -10
             </button>
-            <button onclick="deleteProduct(${index})" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
+            <button onclick="deleteProduct('${product.__backendId}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
               Hapus
             </button>
           </td>
@@ -1262,38 +1420,57 @@
       `).join('');
     }
 
-    function updateStock(index, action) {
-      if (action === 'add') {
-        products[index].stock += 10;
-      } else if (action === 'subtract') {
-        products[index].stock = Math.max(0, products[index].stock - 10);
+    async function updateStock(backendId, change) {
+      const product = products.find(p => p.__backendId === backendId);
+      
+      showLoading();
+      
+      const updatedProduct = {
+        ...product,
+        stock: Math.max(0, product.stock + change)
+      };
+      
+      const result = await window.dataSdk.update(updatedProduct);
+      
+      hideLoading();
+      
+      if (!result.isOk) {
+        showNotification('Gagal mengupdate stok!', 'error');
       }
-      saveProducts();
-      renderStockTable();
     }
 
-    function deleteProduct(index) {
-      const confirmDelete = document.createElement('div');
-      confirmDelete.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-      confirmDelete.innerHTML = `
+    async function deleteProduct(backendId) {
+      const confirmDiv = document.createElement('div');
+      confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      confirmDiv.innerHTML = `
         <div class="bg-white rounded-lg p-6 max-w-sm">
           <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
           <p class="mb-6">Apakah Anda yakin ingin menghapus produk ini?</p>
           <div class="flex gap-2">
-            <button onclick="confirmDeleteProduct(${index})" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Ya, Hapus</button>
+            <button onclick="confirmDeleteProduct('${backendId}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Ya, Hapus</button>
             <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded">Batal</button>
           </div>
         </div>
       `;
-      document.body.appendChild(confirmDelete);
+      document.body.appendChild(confirmDiv);
     }
 
-    function confirmDeleteProduct(index) {
-      products.splice(index, 1);
-      saveProducts();
-      renderStockTable();
+    async function confirmDeleteProduct(backendId) {
+      const product = products.find(p => p.__backendId === backendId);
+      
+      showLoading();
+      
+      const result = await window.dataSdk.delete(product);
+      
+      hideLoading();
+      
       document.querySelector('.fixed.inset-0').remove();
-      showNotification('Produk berhasil dihapus!', 'success');
+      
+      if (result.isOk) {
+        showNotification('Produk berhasil dihapus!', 'success');
+      } else {
+        showNotification('Gagal menghapus produk!', 'error');
+      }
     }
 
     function showReports() {
@@ -1321,7 +1498,6 @@
     }
 
     function renderReports() {
-      const transactions = JSON.parse(localStorage.getItem('mabash_transactions') || '[]');
       const now = new Date();
       
       let filteredTransactions = transactions.filter(t => {
@@ -1361,29 +1537,52 @@
       });
 
       const cashierPerformance = document.getElementById('cashier-performance');
-      cashierPerformance.innerHTML = Object.entries(cashierStats).map(([cashier, stats]) => `
-        <div class="bg-gray-50 p-4 rounded-lg">
-          <div class="flex justify-between items-center">
-            <h4 class="font-semibold">${cashier}</h4>
-            <span class="text-blue-600 font-bold">Rp ${stats.total.toLocaleString('id-ID')}</span>
+      
+      if (Object.keys(cashierStats).length === 0) {
+        cashierPerformance.innerHTML = `
+          <div class="text-center py-8 text-gray-400">
+            <i class="fas fa-chart-line text-5xl mb-3 opacity-30"></i>
+            <p>Belum ada data transaksi untuk periode ini</p>
           </div>
-          <p class="text-sm text-gray-600">Transaksi: ${stats.count} | Rata-rata: Rp ${Math.round(stats.total / stats.count).toLocaleString('id-ID')}</p>
-        </div>
-      `).join('');
+        `;
+      } else {
+        cashierPerformance.innerHTML = Object.entries(cashierStats).map(([cashier, stats]) => `
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex justify-between items-center">
+              <h4 class="font-semibold">${cashier}</h4>
+              <span class="text-blue-600 font-bold">Rp ${stats.total.toLocaleString('id-ID')}</span>
+            </div>
+            <p class="text-sm text-gray-600">Transaksi: ${stats.count} | Rata-rata: Rp ${Math.round(stats.total / stats.count).toLocaleString('id-ID')}</p>
+          </div>
+        `).join('');
+      }
 
       // Transaction history
       const tbody = document.getElementById('transactions-table-body');
-      tbody.innerHTML = filteredTransactions.reverse().map(t => {
-        const date = new Date(t.date);
-        return `
+      
+      if (filteredTransactions.length === 0) {
+        tbody.innerHTML = `
           <tr>
-            <td class="px-4 py-3 text-sm">${date.toLocaleString('id-ID')}</td>
-            <td class="px-4 py-3 text-sm">${t.cashier}</td>
-            <td class="px-4 py-3 text-sm">${t.items.length} item</td>
-            <td class="px-4 py-3 text-sm font-semibold">Rp ${t.total.toLocaleString('id-ID')}</td>
+            <td colspan="4" class="px-4 py-8 text-center text-gray-400">
+              <i class="fas fa-receipt text-5xl mb-3 opacity-30"></i>
+              <p>Belum ada transaksi</p>
+            </td>
           </tr>
         `;
-      }).join('');
+      } else {
+        tbody.innerHTML = filteredTransactions.reverse().map(t => {
+          const date = new Date(t.date);
+          const items = typeof t.items === 'string' ? JSON.parse(t.items) : t.items;
+          return `
+            <tr>
+              <td class="px-4 py-3 text-sm">${date.toLocaleString('id-ID')}</td>
+              <td class="px-4 py-3 text-sm">${t.cashier}</td>
+              <td class="px-4 py-3 text-sm">${items.length} item</td>
+              <td class="px-4 py-3 text-sm font-semibold">Rp ${t.total.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
     function showNotification(message, type) {
@@ -1416,7 +1615,6 @@
           </div>
         `;
 
-        // Request camera access with better constraints
         const constraints = {
           video: {
             facingMode: { ideal: 'environment' },
@@ -1428,7 +1626,6 @@
         scannerStream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = scannerStream;
         
-        // Wait for video to be ready
         await new Promise((resolve) => {
           video.onloadedmetadata = () => {
             video.play();
@@ -1443,7 +1640,6 @@
           </div>
         `;
 
-        // Initialize ZXing barcode reader with better settings
         const codeReader = new ZXing.BrowserMultiFormatReader();
         const hints = new Map();
         const formats = [
@@ -1461,7 +1657,6 @@
         let lastScannedCode = '';
         let lastScanTime = 0;
 
-        // Continuous scanning with optimized frequency
         const scanBarcode = async () => {
           if (!isScanning) return;
 
@@ -1470,20 +1665,19 @@
             
             if (result && result.text) {
               const now = Date.now();
-              // Prevent duplicate scans within 1 second
               if (result.text !== lastScannedCode || now - lastScanTime > 1000) {
                 lastScannedCode = result.text;
                 lastScanTime = now;
                 handleBarcodeDetected(result.text);
-                return; // Stop after successful scan
+                return;
               }
             }
           } catch (err) {
-            // No barcode found or error, continue scanning
+            // Continue scanning
           }
 
           if (isScanning) {
-            setTimeout(scanBarcode, 100); // Scan every 100ms
+            setTimeout(scanBarcode, 100);
           }
         };
 
@@ -1502,14 +1696,11 @@
     }
 
     function handleBarcodeDetected(barcode) {
-      // Stop scanning temporarily
       isScanning = false;
 
-      // Show result in scanner
       document.getElementById('detected-barcode').textContent = `Barcode: ${barcode}`;
       document.getElementById('scanner-result').classList.remove('hidden');
 
-      // Play success sound effect (beep)
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
@@ -1526,16 +1717,14 @@
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.1);
 
-      // Add to cart
       const product = products.find(p => p.barcode === barcode);
       if (product) {
-        addToCart(barcode);
+        addToCart(product.__backendId);
         showNotification(`✅ ${product.name} ditambahkan ke keranjang!`, 'success');
       } else {
         showNotification(`❌ Barcode ${barcode} tidak ditemukan!`, 'error');
       }
 
-      // Auto close after 2 seconds
       setTimeout(() => {
         stopBarcodeScanner();
       }, 2000);
@@ -1544,31 +1733,21 @@
     function stopBarcodeScanner() {
       isScanning = false;
       
-      // Stop camera stream
       if (scannerStream) {
         scannerStream.getTracks().forEach(track => track.stop());
         scannerStream = null;
       }
 
-      // Clear video
       const video = document.getElementById('scanner-video');
       video.srcObject = null;
 
-      // Hide modal
       document.getElementById('scanner-modal').classList.add('hidden');
     }
 
-    // Initialize
-    loadData();
-    renderCashierButtons();
-    
-    // Auto-focus barcode input when POS screen is shown
-    const observer = new MutationObserver(() => {
-      if (!document.getElementById('pos-screen').classList.contains('hidden')) {
-        document.getElementById('barcode-input').focus();
-      }
+    // Initialize app when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeApp();
     });
-    observer.observe(document.getElementById('pos-screen'), { attributes: true, attributeFilter: ['class'] });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71456664639d2c',t:'MTc2NzI2MjY5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b7161b745e6fdf3',t:'MTc2NzI2Mzg1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
