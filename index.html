@@ -251,7 +251,7 @@
     <div class="p-4 md:p-6">
      <div class="mb-6 bg-blue-50 p-3 md:p-4 rounded-lg border-2 border-blue-200">
       <h3 class="font-semibold mb-3 text-indigo-900 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-plus-circle"></i> Tambah Kategori Baru</h3>
-      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">🍎 Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">🍞 Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">�� Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">🧀 Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
+      <div class="flex flex-col sm:flex-row gap-2 md:gap-3"><input type="text" id="new-category-name" placeholder="Nama kategori (contoh: Peralatan Dapur)" class="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <select id="new-category-icon" class="w-full sm:w-40 px-3 md:px-4 py-2 text-sm md:text-base border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500"> <option value="">Pilih Icon</option> <option value="fa-fire">🔥 Fire</option> <option value="fa-pen">✏️ Pen</option> <option value="fa-mug-hot">☕ Mug</option> <option value="fa-cookie-bite">🍪 Cookie</option> <option value="fa-bowl-food">🍜 Bowl</option> <option value="fa-baby">👶 Baby</option> <option value="fa-box">📦 Box</option> <option value="fa-utensils">🍴 Utensils</option> <option value="fa-apple-alt">🍎 Apple</option> <option value="fa-fish">🐟 Fish</option> <option value="fa-bread-slice">🍞 Bread</option> <option value="fa-ice-cream">🍦 Ice Cream</option> <option value="fa-pizza-slice">🍕 Pizza</option> <option value="fa-carrot">🥕 Carrot</option> <option value="fa-cheese">🧀 Cheese</option> </select> <button onclick="addNewCategory()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 md:px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition text-sm md:text-base"> Tambah </button>
       </div>
      </div>
      <h3 class="font-semibold mb-4 text-gray-800 flex items-center gap-2 text-sm md:text-base"><i class="fas fa-list"></i> Daftar Kategori</h3>
@@ -507,11 +507,18 @@
           cashiers = data.data.cashiers || [];
           transactions = data.data.transactions || [];
           
+          // Normalize barcode untuk semua produk (konversi ke string & trim)
+          products = products.map(p => ({
+            ...p,
+            barcode: String(p.barcode).trim()
+          }));
+          
           console.log('✅ Data berhasil dimuat dari Google Sheets');
           console.log(`- ${cashiers.length} kasir`);
           console.log(`- ${categories.length} kategori`);
           console.log(`- ${products.length} produk`);
           console.log(`- ${transactions.length} transaksi`);
+          console.log('📋 Sample barcode:', products.length > 0 ? products[0].barcode : 'none');
           
           updateUI();
           showNotification('✅ Data berhasil dimuat dari Google Sheets!', 'success');
@@ -586,7 +593,7 @@
         
         console.log('📥 Save response status:', response.status);
         const result = await response.json();
-        console.log('���� Save result:', result);
+        console.log('📦 Save result:', result);
         
         if (result.success) {
           console.log('✅ Data berhasil disimpan ke Google Sheets!');
@@ -600,6 +607,8 @@
               categories.push(data);
               break;
             case 'product':
+              // Normalize barcode
+              data.barcode = String(data.barcode).trim();
               products.push(data);
               break;
             case 'transaction':
@@ -639,7 +648,7 @@
         formData.append('id', id);
         formData.append('data', JSON.stringify(data));
         
-        console.log('�������� Update request body:', formData.toString());
+        console.log('📤 Update request body:', formData.toString());
         
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
@@ -669,6 +678,8 @@
               targetArray = categories;
               break;
             case 'product':
+              // Normalize barcode
+              data.barcode = String(data.barcode).trim();
               targetArray = products;
               break;
             case 'transaction':
@@ -952,16 +963,38 @@
     }
 
     function searchProduct() {
-      const query = document.getElementById('barcode-input').value.trim().toLowerCase();
+      const query = document.getElementById('barcode-input').value.trim();
       if (!query) {
         document.getElementById('search-results').classList.add('hidden');
         return;
       }
 
+      console.log('🔍 Mencari produk dengan query:', query);
+      console.log('📦 Total produk di database:', products.length);
+
+      // Normalize query
+      const normalizedQuery = String(query).trim();
+      
+      // Cari barcode exact match dulu (tanpa case-sensitive karena barcode adalah angka)
+      const exactBarcodeMatch = products.find(p => p.barcode === normalizedQuery);
+      
+      console.log('🎯 Exact barcode match:', exactBarcodeMatch);
+
+      if (exactBarcodeMatch) {
+        console.log('✅ Produk ditemukan! Menambahkan ke keranjang...');
+        addToCart(exactBarcodeMatch.id);
+        document.getElementById('barcode-input').value = '';
+        document.getElementById('search-results').classList.add('hidden');
+        return;
+      }
+
+      // Jika tidak ada exact match, cari yang mirip (untuk nama produk)
       const results = products.filter(p => 
-        p.barcode.toLowerCase().includes(query) || 
-        p.name.toLowerCase().includes(query)
+        p.barcode.includes(normalizedQuery) || 
+        p.name.toLowerCase().includes(normalizedQuery.toLowerCase())
       );
+
+      console.log('📋 Hasil pencarian:', results.length, 'produk');
 
       const resultsContainer = document.getElementById('search-results');
 
@@ -970,17 +1003,11 @@
           <div class="p-4 text-center text-gray-500">
             <i class="fas fa-search text-4xl mb-2 opacity-30"></i>
             <p>Produk tidak ditemukan</p>
+            <p class="text-xs mt-2 font-mono bg-gray-100 p-2 rounded">Barcode dicari: "${normalizedQuery}"</p>
+            <p class="text-xs mt-2 text-gray-400">Pastikan barcode di Google Sheets sudah benar</p>
           </div>
         `;
         resultsContainer.classList.remove('hidden');
-        return;
-      }
-
-      const exactMatch = products.find(p => p.barcode === query);
-      if (exactMatch) {
-        addToCart(exactMatch.id);
-        document.getElementById('barcode-input').value = '';
-        resultsContainer.classList.add('hidden');
         return;
       }
 
@@ -989,7 +1016,7 @@
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <h4 class="font-semibold text-sm text-gray-800">${product.name}</h4>
-              <p class="text-xs text-gray-500">${product.category} | Barcode: ${product.barcode}</p>
+              <p class="text-xs text-gray-500">${product.category} | <span class="font-mono bg-gray-100 px-1 rounded">Barcode: ${product.barcode}</span></p>
               <p class="text-xs ${product.stock <= product.minStock ? 'text-red-600 font-semibold' : 'text-gray-500'}">
                 Stok: ${product.stock}${product.stock <= product.minStock ? ' ⚠️' : ''}
               </p>
@@ -1563,13 +1590,13 @@
       
       tbody.innerHTML = products.map((product) => `
         <tr class="${product.stock <= product.minStock ? 'bg-red-50' : ''}">
-          <td class="px-4 py-3 text-sm">${product.barcode}</td>
+          <td class="px-4 py-3 text-sm font-mono bg-gray-50">${product.barcode}</td>
           <td class="px-4 py-3 text-sm">${product.name}</td>
           <td class="px-4 py-3 text-sm">${product.category}</td>
           <td class="px-4 py-3 text-sm">Rp ${product.price.toLocaleString('id-ID')}</td>
           <td class="px-4 py-3 text-sm">
             <span class="${product.stock <= product.minStock ? 'text-red-600 font-semibold' : ''}">
-              ${product.stock}${product.stock <= product.minStock ? ' ���️' : ''}
+              ${product.stock}${product.stock <= product.minStock ? ' ⚠️' : ''}
             </span>
             <span class="text-gray-500 text-xs">(Min: ${product.minStock})</span>
           </td>
@@ -1845,7 +1872,11 @@
     function handleBarcodeDetected(barcode) {
       isScanning = false;
 
-      document.getElementById('detected-barcode').textContent = `Barcode: ${barcode}`;
+      // Normalize barcode
+      const normalizedBarcode = String(barcode).trim();
+      console.log('📷 Barcode terdeteksi:', normalizedBarcode);
+
+      document.getElementById('detected-barcode').textContent = `Barcode: ${normalizedBarcode}`;
       document.getElementById('scanner-result').classList.remove('hidden');
 
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1864,12 +1895,14 @@
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.1);
 
-      const product = products.find(p => p.barcode === barcode);
+      const product = products.find(p => p.barcode === normalizedBarcode);
       if (product) {
         addToCart(product.id);
         showNotification(`✅ ${product.name} ditambahkan ke keranjang!`, 'success');
       } else {
-        showNotification(`❌ Barcode ${barcode} tidak ditemukan!`, 'error');
+        console.log('❌ Produk tidak ditemukan untuk barcode:', normalizedBarcode);
+        console.log('📦 Barcode yang ada di database:', products.map(p => p.barcode));
+        showNotification(`❌ Barcode ${normalizedBarcode} tidak ditemukan!`, 'error');
       }
 
       setTimeout(() => {
@@ -1896,5 +1929,5 @@
       await initializeApp();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71c6bcd0377156',t:'MTc2NzI2Nzk4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71db7bc3e29cf0',t:'MTc2NzI2ODgzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
