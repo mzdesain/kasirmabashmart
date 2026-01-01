@@ -546,38 +546,80 @@
       try {
         showLoading();
         
-        const payload = {
-          action: 'add',
-          type: type,
-          data: data
-        };
+        // Update local data immediately for better UX
+        switch(type) {
+          case 'cashier':
+            cashiers.push(data);
+            break;
+          case 'category':
+            categories.push(data);
+            break;
+          case 'product':
+            products.push(data);
+            break;
+          case 'transaction':
+            transactions.push(data);
+            break;
+        }
         
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        // Update UI immediately
+        updateUI();
         
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
+        // Sync to Google Sheets with retry
+        const maxRetries = 3;
+        let retryCount = 0;
+        let synced = false;
         
-        // Because of no-cors, we can't read the response
-        // We'll just assume it worked and refresh data
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await fetchAllData();
+        while (retryCount < maxRetries && !synced) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                action: 'add',
+                type: type,
+                data: JSON.stringify(data)
+              }),
+              signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              synced = true;
+              console.log('✅ Data berhasil disinkronkan ke Google Sheets');
+            } else {
+              throw new Error(result.message || 'Sync failed');
+            }
+          } catch (syncError) {
+            retryCount++;
+            console.log(`❌ Sync attempt ${retryCount} failed:`, syncError.message);
+            
+            if (retryCount < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            }
+          }
+        }
         
         hideLoading();
+        
+        if (!synced) {
+          showNotification('⚠️ Data tersimpan lokal. Sync ke Google Sheets gagal.', 'error');
+        }
+        
         return true;
       } catch (error) {
         hideLoading();
-        console.error('Error saving to sheet:', error);
-        showNotification('Error menyimpan data: ' + error.message, 'error');
-        return false;
+        console.error('Error saving:', error);
+        showNotification('Data disimpan lokal', 'error');
+        return true;
       }
     }
 
@@ -585,37 +627,87 @@
       try {
         showLoading();
         
-        const payload = {
-          action: 'update',
-          type: type,
-          id: id,
-          data: data
-        };
+        // Update local data immediately
+        let targetArray;
+        switch(type) {
+          case 'cashier':
+            targetArray = cashiers;
+            break;
+          case 'category':
+            targetArray = categories;
+            break;
+          case 'product':
+            targetArray = products;
+            break;
+          case 'transaction':
+            targetArray = transactions;
+            break;
+        }
         
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const index = targetArray.findIndex(item => item.id === id);
+        if (index !== -1) {
+          targetArray[index] = data;
+        }
         
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
+        // Update UI immediately
+        updateUI();
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await fetchAllData();
+        // Sync to Google Sheets with retry
+        const maxRetries = 3;
+        let retryCount = 0;
+        let synced = false;
+        
+        while (retryCount < maxRetries && !synced) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                action: 'update',
+                type: type,
+                id: id,
+                data: JSON.stringify(data)
+              }),
+              signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              synced = true;
+              console.log('✅ Update berhasil disinkronkan ke Google Sheets');
+            } else {
+              throw new Error(result.message || 'Sync failed');
+            }
+          } catch (syncError) {
+            retryCount++;
+            console.log(`❌ Update sync attempt ${retryCount} failed:`, syncError.message);
+            
+            if (retryCount < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            }
+          }
+        }
         
         hideLoading();
+        
+        if (!synced) {
+          showNotification('⚠️ Data diupdate lokal. Sync ke Google Sheets gagal.', 'error');
+        }
+        
         return true;
       } catch (error) {
         hideLoading();
-        console.error('Error updating sheet:', error);
-        showNotification('Error mengupdate data: ' + error.message, 'error');
-        return false;
+        console.error('Error updating:', error);
+        showNotification('Data diupdate lokal', 'error');
+        return true;
       }
     }
 
@@ -623,36 +715,86 @@
       try {
         showLoading();
         
-        const payload = {
-          action: 'delete',
-          type: type,
-          id: id
-        };
+        // Delete from local data immediately
+        let targetArray;
+        switch(type) {
+          case 'cashier':
+            targetArray = cashiers;
+            break;
+          case 'category':
+            targetArray = categories;
+            break;
+          case 'product':
+            targetArray = products;
+            break;
+          case 'transaction':
+            targetArray = transactions;
+            break;
+        }
         
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const index = targetArray.findIndex(item => item.id === id);
+        if (index !== -1) {
+          targetArray.splice(index, 1);
+        }
         
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
+        // Update UI immediately
+        updateUI();
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await fetchAllData();
+        // Sync to Google Sheets with retry
+        const maxRetries = 3;
+        let retryCount = 0;
+        let synced = false;
+        
+        while (retryCount < maxRetries && !synced) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                action: 'delete',
+                type: type,
+                id: id
+              }),
+              signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              synced = true;
+              console.log('✅ Delete berhasil disinkronkan ke Google Sheets');
+            } else {
+              throw new Error(result.message || 'Sync failed');
+            }
+          } catch (syncError) {
+            retryCount++;
+            console.log(`❌ Delete sync attempt ${retryCount} failed:`, syncError.message);
+            
+            if (retryCount < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            }
+          }
+        }
         
         hideLoading();
+        
+        if (!synced) {
+          showNotification('⚠️ Data dihapus lokal. Sync ke Google Sheets gagal.', 'error');
+        }
+        
         return true;
       } catch (error) {
         hideLoading();
-        console.error('Error deleting from sheet:', error);
-        showNotification('Error menghapus data: ' + error.message, 'error');
-        return false;
+        console.error('Error deleting:', error);
+        showNotification('Data dihapus lokal', 'error');
+        return true;
       }
     }
 
@@ -1782,5 +1924,5 @@
       await initializeApp();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b719090f7738a13',t:'MTc2NzI2NTc3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b71a65872c4fe8f',t:'MTc2NzI2NjY2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
